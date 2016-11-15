@@ -4,14 +4,14 @@ class DiceAttr:
 	normal  = 0
 	attack  = 1
 	defense = 2
-	special = 3
-	health  = 4
-	move    = 5
+	move    = 3
+	special = 4
+	health  = 5
 
 	@classmethod
 	def intToName(cls, n):
 		return ["normal","attack","defense",
-				"special","health","move"][n]
+				"move","special","health"][n]
 
 class TowerBase:
 	normal  = 0
@@ -21,4 +21,4 @@ class TowerBase:
 	@classmethod
 	def intToName(cls, n):
 		return ["normal Tower","attack Tower","defense Tower",
-				"special Tower","health Tower","move Tower"][n]
+				"move Tower","special Tower","health Tower"][n]

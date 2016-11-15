@@ -1,0 +1,6 @@
+
+1.use pip install wxpython
+	http://stackoverflow.com/questions/20614409/still-no-wxpython-for-python-3-or-3-3-yet
+
+  download from:
+	https://wxpython.org/Phoenix/snapshot-builds/
