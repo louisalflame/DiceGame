@@ -19,7 +19,7 @@ class GameManager:
 		}
 		self.status = self.STATUS["INIT"]
 
-	def setInterface(self, gui):
+	def setGUI(self, gui):
 		self.gui = gui
 
 	def updateStatus(self, string):
@@ -27,6 +27,7 @@ class GameManager:
 			self.prepare()
 			self.status = self.STATUS["PREPARE"]
 			self.gui.clearText()
+			self.gui.showDices( self.battle.showDices() )
 			self.gui.showText( "start Game...\npress ENTER to throw dices..." )
 		elif self.status == self.STATUS["PREPARE"] or self.status == self.STATUS["COUNT"]:
 			self.battle.startDiceField(5)

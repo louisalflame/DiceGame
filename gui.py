@@ -9,7 +9,7 @@ class GameFrame(MainFrame):
 		MainFrame.__init__(self, parent)
 
 		self.gm = gameManager
-		self.gm.setInterface( self )
+		self.gm.setGUI( self )
 
 	def textSubmit(self, event):
 		string = self.inputField.GetValue()
@@ -24,11 +24,7 @@ class GameFrame(MainFrame):
 		self.outputField.SetValue( str("") )
 
 	def clearDiceRadio(self):
-		self.diceRadio_1.SetValue(False)
-		self.diceRadio_2.SetValue(False)
-		self.diceRadio_3.SetValue(False)
-		self.diceRadio_4.SetValue(False)
-		self.diceRadio_5.SetValue(False)
+		pass
 
 	def showAttrs(self, attrs):
 		self.AttrBox_1.SetValue( str(attrs[0]) )
@@ -39,25 +35,46 @@ class GameFrame(MainFrame):
 		self.AttrBox_6.SetValue( str(attrs[5]) )
 
 	def getRadioIndex(self):
-		if self.diceRadio_1.GetValue():
-			return 1
-		elif self.diceRadio_2.GetValue():
-			return 2
-		elif self.diceRadio_3.GetValue():
-			return 3
-		elif self.diceRadio_4.GetValue():
-			return 4
-		elif self.diceRadio_5.GetValue():
-			return 5
 		return None
+
+	def showDices(self, battleDices):
+		dicesField = battleDices[0]
+		dicesPrepare = battleDices[1]
+		dicesUsed = battleDices[2]
+		self.showDicesPrepare( dicesPrepare )
+
+	def showDicesPrepare(self, dicesPrepare):
+		for i in range( int( len(dicesPrepare)/5 ) ):
+			sizer = wx.BoxSizer( wx.HORIZONTAL )
+			for j in range(5):
+				if (i*5+j) >= len(dicesPrepare):
+					break
+				bitmap = self.getBitmapByPath( u"tmpPanel/base.bmp" )
+				diceImage = wx.BitmapButton( self.dicesPanel, wx.ID_ANY, bitmap, wx.DefaultPosition, wx.DefaultSize, 0 )
+				diceImage.Bind( wx.EVT_BUTTON, self.checkDicePrepare( str(dicesPrepare[i*5+j]) ) )
+				sizer.Add( diceImage, 0, wx.ALL, 5 )
+			self.dicesPanelSizer.Add( sizer, 1, wx.EXPAND, 5 )
+		self.dicesPanel.SetSizer( self.dicesPanelSizer )
+		self.MainSizer.Layout()
+		self.Centre( wx.BOTH )
+
+	def getBitmapByPath(self, path):
+		image = wx.Image(path, wx.BITMAP_TYPE_BMP)
+		image.Rescale(20,20)
+		return wx.Bitmap(image)
 
 	def changeImage(self):
 		image = wx.Image(u"tmpPanel/def.bmp", wx.BITMAP_TYPE_BMP)
 		image.Rescale(20,20) 
-		self.diceImage1.SetBitmap( wx.Bitmap(image) )
 
 		#self.m_bitmap6.SetBitmap( wx.Bitmap(image) )
 		diceImageX = wx.StaticBitmap( self, wx.ID_ANY, wx.Bitmap(image), wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.DicePlaySizer.Add( diceImageX ,0, wx.ALL, 5 )
+		self.DicePlaySizer.Add( diceImageX , 0, wx.ALL, 5 )
+		self.MainSizer.Layout()
 		self.Layout()
 		#self.DicePlayPanel.Add( self.diceImageX, 0, wx.ALL, 5 )
+
+	def checkDicePrepare(self, dicePrepare):
+		def OnClick(event):
+			self.showText( str(dicePrepare) )
+		return OnClick

@@ -54,6 +54,9 @@ class BattleManager:
 			return "End Of Dices, => REFRESH "
 		return ""
 
+	def showDices(self):
+		return self.__diceField, self.__dicePrepare, self.__diceUsed
+
 	def showDicePanels(self):
 		return "\n".join([ str(p) for p in self.__currentPanels ])
 
