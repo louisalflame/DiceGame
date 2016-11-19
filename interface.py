@@ -17,7 +17,7 @@ import wx.xrc
 class MainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 600,400 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 600,480 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 		
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 		
@@ -25,7 +25,6 @@ class MainFrame ( wx.Frame ):
 				
 		self.initLabel()
 		self.initCenterSizer()
-		self.initDicePlay()
 		self.initAttrTower()
 		self.initSubmit()		
 		
@@ -38,30 +37,50 @@ class MainFrame ( wx.Frame ):
 		self.submit.Bind( wx.EVT_BUTTON, self.textSubmit )
 
 	def initLabel(self):
-		self.label = wx.StaticText( self, wx.ID_ANY, u"                                 Dice Game --prototype--", wx.Point( -1,-1 ), wx.DefaultSize, 0 )
-		self.label.Wrap( -1 )
-		self.label.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 76, 90, 90, False, wx.EmptyString ) )		
-		self.MainSizer.Add( self.label, 0, wx.TOP|wx.BOTTOM, 5 )
+		self.MainLabel = wx.StaticText( self, wx.ID_ANY, u"                Dice Game --prototype--", wx.Point( 200,0 ), wx.DefaultSize, 0 )
+		
+		self.MainLabel.SetFont( wx.Font( wx.NORMAL_FONT.GetPointSize(), 76, 90, 90, False, wx.EmptyString ) )		
+		self.MainSizer.Add( self.MainLabel, 0, wx.ALL, 5 )
 
 	def initCenterSizer(self):
 		self.CenterSizer = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.outputField = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 300,180 ), wx.TE_MULTILINE|wx.TE_READONLY )
+		self.outputField = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 300,280 ), wx.TE_MULTILINE|wx.TE_READONLY )
 		self.CenterSizer.Add( self.outputField, 0, wx.ALL, 5 )
 
-		self.dicesPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 250,180 ), wx.TAB_TRAVERSAL )
-		self.dicesPanelSizer = wx.BoxSizer( wx.VERTICAL )
-		self.dicesPanel.SetSizer( self.dicesPanelSizer )
-		self.dicesPanel.Layout()		
-		self.CenterSizer.Add( self.dicesPanel, 1, wx.EXPAND |wx.ALL, 5 )
-		
+		self.DiceViewSizer = wx.BoxSizer( wx.VERTICAL )
+
+		self.DiceInfoLabel = wx.StaticText( self, wx.ID_ANY, u" -- Dice Info -- ", wx.DefaultPosition ,wx.DefaultSize, 0  )
+		self.DiceViewSizer.Add( self.DiceInfoLabel, 0, 0, 5 )
+
+		self.DiceInfoPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 250,40 ), wx.TAB_TRAVERSAL )
+		self.DiceInfoPanelSizer = wx.BoxSizer( wx.HORIZONTAL )
+		self.DiceInfoPanel.SetSizer( self.DiceInfoPanelSizer )
+		self.DiceInfoPanel.Layout()		
+		self.DiceViewSizer.Add( self.DiceInfoPanel, 0, wx.ALL, 5 )
+
+		self.DicesLabel = wx.StaticText( self, wx.ID_ANY, u" -- Dices View -- ", wx.DefaultPosition ,wx.DefaultSize, 0  )
+		self.DiceViewSizer.Add( self.DicesLabel, 0, 0, 5 )
+
+		self.DicesPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 250,120 ), wx.TAB_TRAVERSAL )
+		self.DicesPanelSizer = wx.BoxSizer( wx.VERTICAL )
+		self.DicesPanel.SetSizer( self.DicesPanelSizer )
+		self.DicesPanel.Layout()		
+		self.DiceViewSizer.Add( self.DicesPanel, 0, wx.ALL, 5 )
+
+		self.DicePlayLabel = wx.StaticText( self, wx.ID_ANY, u" -- Dice Result -- ", wx.DefaultPosition ,wx.DefaultSize, 0  )
+		self.DiceViewSizer.Add( self.DicePlayLabel, 0, 0, 5 )
+
+		self.DicePlayPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 250,60 ), wx.TAB_TRAVERSAL )
+		self.DicePlaySizer = wx.BoxSizer( wx.HORIZONTAL )
+		self.DicePlayPanel.SetSizer( self.DicePlaySizer )
+		self.DicePlayPanel.Layout()
+		self.DiceViewSizer.Add( self.DicePlayPanel, 0, wx.ALL, 5 )	
+
+		self.CenterSizer.Add( self.DiceViewSizer, 1, wx.ALL, 5 )
+
 		self.MainSizer.Add( self.CenterSizer, 0, 0, 0 )
 
-	def initDicePlay(self):				
-		self.DicePlaySizer = wx.BoxSizer( wx.HORIZONTAL )
-
-		self.MainSizer.Add( self.DicePlaySizer , 0, wx.ALL, 5 )
-		
 	def initAttrTower(self):		
 		self.AttrTowerSizer = wx.BoxSizer( wx.VERTICAL )		
 		self.AttrSizer = wx.BoxSizer( wx.HORIZONTAL )

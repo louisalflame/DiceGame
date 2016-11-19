@@ -27,18 +27,19 @@ class GameManager:
 			self.prepare()
 			self.status = self.STATUS["PREPARE"]
 			self.gui.clearText()
-			self.gui.showDices( self.battle.showDices() )
+			#self.gui.showDices( self.battle.showDices() )
 			self.gui.showText( "start Game...\npress ENTER to throw dices..." )
 		elif self.status == self.STATUS["PREPARE"] or self.status == self.STATUS["COUNT"]:
 			self.battle.startDiceField(5)
 			self.battle.throwDices()
+
+			self.gui.showDices( self.battle.showDices() )
 			self.gui.showText(
 				self.battle.showDicePanels() )			
 			self.gui.showText( "Choose a dice as tower base:" )
-			self.gui.clearDiceRadio()
 			self.status = self.STATUS["THROW"]
 		elif self.status == self.STATUS["THROW"]:
-			num = self.gui.getRadioIndex()
+			num = 0
 			if num:
 				self.gui.showText(
 					self.battle.buildTowerByPanel( num-1 ) )
@@ -51,7 +52,6 @@ class GameManager:
 
 	def initGui(self):
 		self.gui.showText("press ENTER to prepare game...")
-		self.gui.clearDiceRadio()
 
 	def prepare(self):
 		self.player.prepare()
