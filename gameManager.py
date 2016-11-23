@@ -19,7 +19,7 @@ class GameManager:
 		}
 		self.status = self.STATUS["INIT"]
 
-	def setInterface(self, gui):
+	def setGUI(self, gui):
 		self.gui = gui
 
 	def updateStatus(self, string):
@@ -27,30 +27,29 @@ class GameManager:
 			self.prepare()
 			self.status = self.STATUS["PREPARE"]
 			self.gui.clearText()
+			self.gui.showDices( self.battle.showDices() )
 			self.gui.showText( "start Game...\npress ENTER to throw dices..." )
 		elif self.status == self.STATUS["PREPARE"] or self.status == self.STATUS["COUNT"]:
 			self.battle.startDiceField(5)
 			self.battle.throwDices()
-			self.gui.showText(
-				self.battle.showDicePanels() )			
-			self.gui.showText( "Choose a dice as tower base:" )
-			self.gui.clearDiceRadio()
-			self.status = self.STATUS["THROW"]
-		elif self.status == self.STATUS["THROW"]:
-			num = self.gui.getRadioIndex()
-			if num:
-				self.gui.showText(
-					self.battle.buildTowerByPanel( num-1 ) )
-			else:
-				self.gui.showText( "Abandon picking dice panel..." )
 
+			self.gui.showDices( self.battle.showDices() )	
+			self.gui.showText( "Choose a dice as tower base:" )
+			self.status = self.STATUS["THROW"]
+		elif self.status == self.STATUS["THROW"]:				
+			self.gui.showText( "Abandon picking dice panel..." )
 			self.battle.countPoints()
 			self.cleanDices()
 			self.status = self.STATUS["COUNT"]
 
+	def pickPanel(self, panel):
+		self.battle.buildTowerByPanel(panel)
+		self.battle.countPoints()
+		self.cleanDices()
+		self.status = self.STATUS["COUNT"]
+
 	def initGui(self):
 		self.gui.showText("press ENTER to prepare game...")
-		self.gui.clearDiceRadio()
 
 	def prepare(self):
 		self.player.prepare()
@@ -62,5 +61,6 @@ class GameManager:
 			self.battle.checkRefreshDices() )
 		self.gui.showAttrs(
 			self.battle.showAttrs() )
-		self.gui.changeImage()
+		self.gui.showDices( self.battle.showDices() )
+		self.gui.cleanDicePlay()
 

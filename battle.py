@@ -18,6 +18,8 @@ class BattleManager:
 
 	def setDices(self, dices):
 		self.__dicePrepare += dices
+		for dice in self.__dicePrepare:
+			dice.refresh()
 
 	def startDiceField(self, num=1):
 		for i in range(num):
@@ -30,8 +32,7 @@ class BattleManager:
 			panel = dice.getPanel()
 			self.__currentPanels.append(panel)
 
-	def buildTowerByPanel(self, choice):
-		panel = self.__currentPanels[choice]
+	def buildTowerByPanel(self, panel):
 		tower = Tower()
 		tower.buildByPanel( panel )
 		self.__currentPanels.remove(panel)
@@ -51,8 +52,13 @@ class BattleManager:
 		if not self.__dicePrepare:
 			self.__dicePrepare = self.__diceUsed
 			self.__diceUsed = []
+			for dice in self.__dicePrepare:
+				dice.refresh()
 			return "End Of Dices, => REFRESH "
 		return ""
+
+	def showDices(self):
+		return self.__diceField, self.__dicePrepare, self.__diceUsed
 
 	def showDicePanels(self):
 		return "\n".join([ str(p) for p in self.__currentPanels ])
