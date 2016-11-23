@@ -43,8 +43,6 @@ class GameFrame(MainFrame):
 		self.showDicesField( dicesField )
 
 	def showDicesPrepare(self, dicesPrepare):
-		self.DicesPanelSizer.Clear(True)
-
 		for i in range( int( len(dicesPrepare)/5 ) ):
 			sizer = wx.BoxSizer( wx.HORIZONTAL )
 			for j in range(5):

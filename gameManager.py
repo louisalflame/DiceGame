@@ -27,6 +27,7 @@ class GameManager:
 			self.prepare()
 			self.status = self.STATUS["PREPARE"]
 			self.gui.clearText()
+
 			self.gui.showDices( self.battle.showDices() )
 			self.gui.showText( "start Game...\npress ENTER to throw dices..." )
 		elif self.status == self.STATUS["PREPARE"] or self.status == self.STATUS["COUNT"]:
