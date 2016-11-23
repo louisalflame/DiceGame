@@ -30,17 +30,16 @@ class DiceData:
 		[ DiceAttr.special, 2, TowerBase.attack ],
 	]
 
-
 class DicePackage:
 	basic = [ 
-		DiceData.AttackDice, DiceData.AttackDice,
-		DiceData.AttackDice, DiceData.AttackDice,
-		DiceData.AttackDice, DiceData.AttackDice,
-		DiceData.AttackDice, DiceData.AttackDice,
-		DiceData.DefenseDice, DiceData.DefenseDice,
-		DiceData.DefenseDice, DiceData.DefenseDice,
-		DiceData.DefenseDice, DiceData.DefenseDice,
-		DiceData.DefenseDice, DiceData.DefenseDice,
-		DiceData.SpecialDice, DiceData.SpecialDice,
-		DiceData.SpecialDice, DiceData.SpecialDice,
+		DiceType.normal, DiceType.normal,
+		DiceType.normal, DiceType.normal,
+		DiceType.normal, DiceType.normal,
+		DiceType.normal, DiceType.normal,
+		DiceType.defense, DiceType.defense,
+		DiceType.defense, DiceType.defense,
+		DiceType.defense, DiceType.defense,
+		DiceType.defense, DiceType.defense,
+		DiceType.special, DiceType.special,
+		DiceType.special, DiceType.special,
 	]

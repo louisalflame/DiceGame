@@ -1,5 +1,4 @@
 # coding=UTF-8
-
 class DiceAttr:
 	normal  = 0
 	attack  = 1
@@ -45,12 +44,12 @@ class TowerBase:
 
 	@classmethod
 	def intToImageSrc(cls, n):
-		return [ "NorTower.bmp",
-				 "AtkTower.bmp",
-				 "DefTower.bmp",
-				 "MovTower.bmp",
-				 "SpcTower.bmp",
-				 "HealTower.bmp" ][n]
+		return [ "NorTower",
+				 "AtkTower",
+				 "DefTower",
+				 "MovTower",
+				 "SpcTower",
+				 "HealTower" ][n]
 				 
 	@classmethod
 	def intToAttr(cls, n):
@@ -60,3 +59,30 @@ class TowerBase:
 				 "Mov",
 				 "Spc",
 				 "Heal" ][n]
+
+class DiceType:
+	normal  = 0
+	attack  = 1
+	defense = 2
+	move    = 3
+	special = 4
+	health  = 5
+
+	@classmethod
+	def intToImageSrc(cls, n):
+		return [ "DiceNor",
+				 "DiceAtk",
+				 "DiceDef",
+				 "DiceMov",
+				 "DiceSpc",
+				 "DiceHeal" ][n]
+
+	@classmethod
+	def intToDiceData(cls, n):
+		from data import DiceData
+		return [ DiceData.AttackDice,
+				 DiceData.DefenseDice,
+				 DiceData.DefenseDice,
+				 DiceData.DefenseDice,
+				 DiceData.SpecialDice,
+				 DiceData.SpecialDice ][n]

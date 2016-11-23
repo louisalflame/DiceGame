@@ -22,7 +22,7 @@ class GameManager:
 	def setGUI(self, gui):
 		self.gui = gui
 
-	def updateStatus(self, string):
+	def updateStatus(self):
 		if self.status == self.STATUS["INIT"]:
 			self.prepare()
 			self.status = self.STATUS["PREPARE"]

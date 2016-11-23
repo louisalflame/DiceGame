@@ -38,13 +38,13 @@ class DicePanel:
 		return self.__panelId
 
 	def getAttrImageSrc(self):
-		return "{0}Base{1}{2}.bmp".format(
+		return "{0}Base{1}{2}.png".format(
 			TowerBase.intToAttr(self.__base),
 			DiceAttr.intToAttr(self.__attr),
 			self.__number )
 
 	def getBaseImageSrc(self):
-		return TowerBase.intToImageSrc(self.__base)
+		return "{0}.png".format( TowerBase.intToImageSrc(self.__base) )
 
 	def __str__(self):
 		return " {0: <2},{1} :( {2: <10}:{3: <3}:{4} )".format( 
@@ -68,6 +68,7 @@ class Dice:
 		self.__panels = list()
 		self.__used = False
 		self.__num = None
+		self.__type = None
 		for i in range(self.__size):
 			self.__panels.append( DicePanel(diceId, i) )
 
@@ -100,10 +101,16 @@ class GameDice(Dice):
 	def getPanel(self):
 		return self._Dice__panels[ self.getNum() ]
 
-	def setDice(self, diceData):
+	def setDice(self, diceType):
+		self._Dice__type = diceType
+		diceData = DiceType.intToDiceData(diceType)
+
 		for i, panel in zip(range(self._Dice__size), diceData):
 			newPanel = DicePanel( self._Dice__diceId, i )
 			newPanel.setAttr(   panel[0] )
 			newPanel.setNumber( panel[1] )
 			newPanel.setBase(   panel[2] )
 			self._Dice__panels[i] = newPanel
+
+	def getDiceTypeImageSrc(self):
+		return "{0}.png".format( DiceType.intToImageSrc(self._Dice__type) )
