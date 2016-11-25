@@ -103,7 +103,7 @@ class GameDice(Dice):
 
 	def setDice(self, diceType):
 		self._Dice__type = diceType
-		diceData = DiceType.intToDiceData(diceType)
+		diceData = DiceData.intToData(diceType)
 
 		for i, panel in zip(range(self._Dice__size), diceData):
 			newPanel = DicePanel( self._Dice__diceId, i )
@@ -113,4 +113,4 @@ class GameDice(Dice):
 			self._Dice__panels[i] = newPanel
 
 	def getDiceTypeImageSrc(self):
-		return "{0}.png".format( DiceType.intToImageSrc(self._Dice__type) )
+		return "{0}.png".format( DiceData.intToImageSrc(self._Dice__type) )
