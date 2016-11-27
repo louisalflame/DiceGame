@@ -108,3 +108,9 @@ class GameFrame(MainFrame):
 		def OnClick(event):
 			self.gm.pickPanel( dice.getPanel() )
 		return OnClick
+
+
+
+
+	def changeToPlayScene(self):
+		self.initDicePlayFrame()

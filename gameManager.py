@@ -14,8 +14,9 @@ class GameManager:
 		self.STATUS = {
 			"INIT" : 0, 
 			"PREPARE" : 1,
-			"THROW" : 2,
-			"COUNT" : 3,
+			"START" : 2,
+			"THROW" : 3,
+			"COUNT" : 4,
 		}
 		self.status = self.STATUS["INIT"]
 
@@ -24,30 +25,35 @@ class GameManager:
 
 	def updateStatus(self):
 		if self.status == self.STATUS["INIT"]:
-			self.prepare()
 			self.status = self.STATUS["PREPARE"]
-			self.gui.clearText()
+			self.gui.changeToPlayScene()
 
+		elif self.status == self.STATUS["PREPARE"]:
+			self.prepare()
+			self.status = self.STATUS["START"]			
 			self.gui.showDices( self.battle.showDices() )
+			self.gui.clearText()
 			self.gui.showText( "start Game...\npress ENTER to throw dices..." )
-		elif self.status == self.STATUS["PREPARE"] or self.status == self.STATUS["COUNT"]:
+		elif self.status == self.STATUS["START"] or self.status == self.STATUS["COUNT"]:
+			self.status = self.STATUS["THROW"]
 			self.battle.startDiceField(5)
 			self.battle.throwDices()
 
-			self.gui.showDices( self.battle.showDices() )	
+			self.gui.showDices( self.battle.showDices() )
+			self.gui.clearText()
 			self.gui.showText( "Choose a dice as tower base:" )
-			self.status = self.STATUS["THROW"]
-		elif self.status == self.STATUS["THROW"]:				
+		elif self.status == self.STATUS["THROW"]:
+			self.status = self.STATUS["COUNT"]
+			self.gui.clearText()
 			self.gui.showText( "Abandon picking dice panel..." )
 			self.battle.countPoints()
 			self.cleanDices()
-			self.status = self.STATUS["COUNT"]
 
 	def pickPanel(self, panel):
+		self.status = self.STATUS["COUNT"]
 		self.battle.buildTowerByPanel(panel)
 		self.battle.countPoints()
 		self.cleanDices()
-		self.status = self.STATUS["COUNT"]
 
 	def initGui(self):
 		self.gui.showText("press ENTER to prepare game...")

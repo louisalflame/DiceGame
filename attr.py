@@ -59,4 +59,3 @@ class TowerBase:
 				 "Mov",
 				 "Spc",
 				 "Heal" ][n]
-

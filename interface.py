@@ -8,7 +8,7 @@
 ###########################################################################
 
 import wx
-import wx.xrc
+import wx.lib.scrolledpanel
 
 ###########################################################################
 ## Class MainFrame
@@ -17,12 +17,46 @@ import wx.xrc
 class MainFrame ( wx.Frame ):
 	
 	def __init__( self, parent ):
-		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, 
+		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, 
+			title = wx.EmptyString, pos = wx.DefaultPosition, 
 			size = wx.Size( 600,550 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
-		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
-		
-		self.MainSizer = wx.BoxSizer( wx.VERTICAL )				
+		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )		
+		self.MainSizer = wx.BoxSizer( wx.VERTICAL )		
+
+		self.initDiceSettingFrame()
+
+#==========================================================================
+# Widget for Setting
+#==========================================================================
+	def initDiceSettingFrame(self):
+		self.MainSizer.Clear(True)
+		self.initLabel()
+
+		self.CenterSizer = wx.BoxSizer( wx.HORIZONTAL )
+		self.DicePackagePanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size(250,300), wx.TAB_TRAVERSAL )
+		self.DicePackagePanel.SetupScrolling()
+		self.CenterSizer.Add( self.DicePackagePanel, 0, wx.ALL, 5 )
+
+		self.DiceDataPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size(250,300), wx.TAB_TRAVERSAL )
+		self.DiceDataPanel.SetupScrolling()
+		self.CenterSizer.Add( self.DiceDataPanel, 0, wx.ALL, 5 )
+
+		self.MainSizer.Add( self.CenterSizer, 0, 0, 0 )
+
+		self.initSubmit()
+
+		self.SetSizer( self.MainSizer )
+		self.Layout()		
+
+#==========================================================================
+# Widget for Playing
+#==========================================================================
+	def initDicePlayFrame(self):
+		self.MainSizer.Clear(True)
+
 		self.initLabel()
 
 		self.CenterSizer = wx.BoxSizer( wx.HORIZONTAL )
@@ -30,15 +64,10 @@ class MainFrame ( wx.Frame ):
 		self.initAttrTower()
 		self.MainSizer.Add( self.CenterSizer, 0, 0, 0 )
 
-		self.initSubmit()		
-		
+		self.initSubmit()
+
 		self.SetSizer( self.MainSizer )
-		self.Layout()
-		
-		self.Centre( wx.BOTH )
-		
-		# Connect Events
-		self.submit.Bind( wx.EVT_BUTTON, self.textSubmit )
+		self.Layout()		
 
 	def initLabel(self):
 		self.MainLabel = wx.StaticText( self, wx.ID_ANY, u"                Dice Game --prototype--",
@@ -52,7 +81,8 @@ class MainFrame ( wx.Frame ):
 			wx.DefaultPosition ,wx.DefaultSize, 0  )
 		self.DiceViewSizer.Add( self.DiceInfoLabel, 0, 0, 0 )
 
-		self.DiceInfoPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size( 250,60 ), wx.TAB_TRAVERSAL )
+		self.DiceInfoPanel = wx.Panel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size( 250,50 ), wx.TAB_TRAVERSAL )
 		self.DiceInfoSizer = wx.BoxSizer( wx.HORIZONTAL )
 		self.DiceInfoPanel.SetSizer( self.DiceInfoSizer )
 		self.DiceInfoPanel.Layout()		
@@ -62,7 +92,9 @@ class MainFrame ( wx.Frame ):
 			wx.DefaultPosition ,wx.DefaultSize, 0  )
 		self.DiceViewSizer.Add( self.DicesLabel, 0, 0, 0 )
 
-		self.DicesPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size(250,160), wx.TAB_TRAVERSAL )
+		self.DicesPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size(250,120), wx.TAB_TRAVERSAL )
+		self.DicesPanel.SetupScrolling()
 		self.DicesPanelSizer = wx.BoxSizer( wx.VERTICAL )
 		self.DicesPanel.SetSizer( self.DicesPanelSizer )
 		self.DicesPanel.Layout()		
@@ -72,7 +104,8 @@ class MainFrame ( wx.Frame ):
 			wx.DefaultPosition ,wx.DefaultSize, 0  )
 		self.DiceViewSizer.Add( self.DicePlayLabel, 0, 0, 0 )
 
-		self.DicePlayPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size(250,100), wx.TAB_TRAVERSAL )
+		self.DicePlayPanel = wx.Panel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size(250,100), wx.TAB_TRAVERSAL )
 		self.DicePlaySizer = wx.BoxSizer( wx.VERTICAL )
 		self.DicePlayPanel.SetSizer( self.DicePlaySizer )
 		self.DicePlayPanel.Layout()
@@ -86,7 +119,8 @@ class MainFrame ( wx.Frame ):
 		self.TowerViewLabel = wx.StaticText( self, wx.ID_ANY, u" -- Tower Place -- ",
 			wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.AttrTowerSizer.Add( self.TowerViewLabel, 0, 0, 0 )
-		self.TowerViewPanel = wx.Panel( self, wx.ID_ANY, wx.DefaultPosition, wx.Size(250, 100), wx.TAB_TRAVERSAL )
+		self.TowerViewPanel = wx.Panel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size(250, 100), wx.TAB_TRAVERSAL )
 		self.AttrTowerSizer.Add( self.TowerViewPanel, 0, wx.ALL, 5 )
 
 		self.AttrViewLabel = wx.StaticText( self, wx.ID_ANY, u" -- Attribute Point -- ",
@@ -162,10 +196,13 @@ class MainFrame ( wx.Frame ):
 	def initSubmit(self):		
 		self.OutputSizer = wx.BoxSizer( wx.HORIZONTAL )
 		
-		self.OutputField = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 400,50 ), wx.TE_MULTILINE|wx.TE_READONLY )
+		self.OutputField = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, 
+			wx.DefaultPosition, wx.Size( 400,50 ), wx.TE_MULTILINE|wx.TE_READONLY )
 		self.OutputSizer.Add( self.OutputField, 0, wx.ALL, 5 )
 		
-		self.submit = wx.Button( self, wx.ID_ANY, u"Enter", wx.DefaultPosition, wx.Size( 100,30 ), 0 )
+		self.submit = wx.Button( self, wx.ID_ANY, u"Enter", 
+			wx.DefaultPosition, wx.Size( 100,50 ), 0 )
+		self.submit.Bind( wx.EVT_BUTTON, self.textSubmit )
 		self.OutputSizer.Add( self.submit, 0, wx.ALL, 5 )		
 		
 		self.MainSizer.Add( self.OutputSizer, 0, 0, 0 )
