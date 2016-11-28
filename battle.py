@@ -82,5 +82,9 @@ class PlayerManager:
 	def diceShuffle(self):
 		random.shuffle(self.__dices)
 
-	def getDices(self, n=1):
+	def getDices(self):
 		return self.__dices
+
+	def pushDice(self, dice):
+		dice.setDiceId( len(self.__dices) )
+		self.__dices.append(dice)

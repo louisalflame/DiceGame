@@ -54,6 +54,15 @@ class DiceData:
 				    [ DiceAttr.attack,  3, TowerBase.attack ], ]
 
 	@classmethod
+	def getAllDataType(cls):
+		return [ DiceData.normal,
+				 DiceData.attack,
+				 DiceData.defense,
+				 DiceData.move,
+				 DiceData.special,
+				 DiceData.health, ]
+
+	@classmethod
 	def intToData(cls, n):
 		return [ DiceData.NormalDice,
 				 DiceData.AttackDice,

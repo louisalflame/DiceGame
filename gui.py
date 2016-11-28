@@ -11,6 +11,45 @@ class GameFrame(MainFrame):
 		self.gm = gameManager
 		self.gm.setGUI( self )
 
+	def changeToSettingScene(self):
+		self.initDiceSettingFrame()
+
+	def changeToPlayScene(self):
+		self.initDicePlayFrame()
+
+#==========================================================================
+# Widget for Setting
+#==========================================================================
+	def showDicesMenu(self):
+		self.DiceDataSizer.Clear(True)
+
+		from data import DiceData
+		from dice import GameDice
+		for diceDataType in DiceData.getAllDataType():
+			dice = GameDice(None)
+			dice.setDice(diceDataType)
+			sizer = wx.BoxSizer( wx.HORIZONTAL )
+			diceButton = wx.BitmapButton( self.DiceDataPanel, wx.ID_ANY, 
+				wx.Bitmap( wx.Image(u"panel/"+dice.getDiceTypeImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(40,40) ),
+				wx.DefaultPosition, wx.DefaultSize, 0 )
+			diceButton.Bind( wx.EVT_BUTTON, self.pickDiceToPackage(dice) )
+			sizer.Add( diceButton, 0, wx.RIGHT, 5 )
+
+			for panel in dice.getAllPanels():
+				image = wx.Image( u"panel/"+panel.getAttrImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(40,40)
+				panelImage = wx.StaticBitmap( self.DiceDataPanel, wx.ID_ANY, 
+					wx.Bitmap(image), wx.DefaultPosition, wx.DefaultSize, 0 )
+				sizer.Add( panelImage, 0, wx.ALL, 2 )
+			self.DiceDataSizer.Add( sizer, 0, wx.BOTTOM, 2 )
+
+	def pickDiceToPackage(self, dice):
+		def OnClick(event):
+			self.gm.pickDiceToPackage( dice )
+		return OnClick
+
+#==========================================================================
+# Widget for Playing
+#==========================================================================
 	def textSubmit(self, event):
 		self.gm.updateStatus()
 
@@ -110,7 +149,3 @@ class GameFrame(MainFrame):
 		return OnClick
 
 
-
-
-	def changeToPlayScene(self):
-		self.initDicePlayFrame()

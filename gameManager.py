@@ -22,6 +22,8 @@ class GameManager:
 
 	def setGUI(self, gui):
 		self.gui = gui
+		self.gui.changeToSettingScene()
+		self.gui.showDicesMenu()
 
 	def updateStatus(self):
 		if self.status == self.STATUS["INIT"]:
@@ -33,8 +35,9 @@ class GameManager:
 				self.gui.showText( "Please Select Dices First..." )
 
 		elif self.status == self.STATUS["PREPARE"]:
-			self.prepare()
 			self.status = self.STATUS["START"]			
+			self.prepare()
+
 			self.gui.showDices( self.battle.showDices() )
 			self.gui.clearText()
 			self.gui.showText( "Press ENTER to throw dices..." )
@@ -54,7 +57,10 @@ class GameManager:
 			self.cleanDices()
 
 	def isInitialComplete(self):
-		return True
+		return len( self.player.getDices() ) % 5 is 0
+
+	def pickDiceToPackage(self, dice):
+		self.player.pushDice(dice)
 
 	def pickPanel(self, panel):
 		self.status = self.STATUS["COUNT"]

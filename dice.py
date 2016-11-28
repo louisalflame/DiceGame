@@ -72,6 +72,9 @@ class Dice:
 		for i in range(self.__size):
 			self.__panels.append( DicePanel(diceId, i) )
 
+	def setDiceId(self, diceId):
+		self.__diceId = diceId
+
 	def getAllPanels(self):
 		return self.__panels
 
