@@ -33,18 +33,51 @@ class MainFrame ( wx.Frame ):
 		self.MainSizer.Clear(True)
 		self.initLabel()
 
-		self.CenterSizer = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.MainPlayerLabel = wx.StaticText( self, wx.ID_ANY, u" -- Player -- ",
+			wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.MainSizer.Add( self.MainPlayerLabel, 0, wx.ALL, 5 )
+
+		self.MainPlayerSizer = wx.BoxSizer( wx.HORIZONTAL )
+		self.MainPlayerText = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString,
+			wx.DefaultPosition, wx.Size(200,50), wx.TE_READONLY )
+		self.MainPlayerSizer.Add( self.MainPlayerText, 0, wx.ALL, 5 )
+		self.MainPlayerPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size(250,50), wx.TAB_TRAVERSAL )
+		self.MainPlayerPanel.SetupScrolling()
+		self.MainPlayerSizer.Add( self.MainPlayerPanel, 0, wx.ALL, 5 )
+		self.MainSizer.Add( self.MainPlayerSizer, 0, 0, 0 )
+
+		self.EnemyPlayerLabel = wx.StaticText( self, wx.ID_ANY, u" -- Enemy -- ",
+			wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.MainSizer.Add( self.EnemyPlayerLabel, 0, wx.ALL, 5 )
+
+		self.EnemyPlayerSizer = wx.BoxSizer( wx.HORIZONTAL )
+		self.EnemyPlayerText = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString,
+			wx.DefaultPosition, wx.Size(200,50), wx.TE_READONLY )
+		self.EnemyPlayerSizer.Add( self.EnemyPlayerText, 0, wx.ALL, 5 )
+		self.EnemyPlayerPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
+			wx.DefaultPosition, wx.Size(250,50), wx.TAB_TRAVERSAL )
+		self.EnemyPlayerPanel.SetupScrolling()
+		self.EnemyPlayerSizer.Add( self.EnemyPlayerPanel, 0, wx.ALL, 5 )
+		self.MainSizer.Add( self.EnemyPlayerSizer, 0, 0, 0 )
+
+		self.DiceMenuLabel = wx.StaticText( self, wx.ID_ANY, u" -- Dice Package -- ",
+			wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.MainSizer.Add( self.DiceMenuLabel, 0, wx.ALL, 5 )
+
+		self.DiceMenuSizer = wx.BoxSizer( wx.HORIZONTAL )
 		self.DicePackagePanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
-			wx.DefaultPosition, wx.Size(250,300), wx.TAB_TRAVERSAL )
+			wx.DefaultPosition, wx.Size(250,200), wx.TAB_TRAVERSAL )
 		self.DicePackagePanel.SetupScrolling()
-		self.CenterSizer.Add( self.DicePackagePanel, 0, wx.ALL, 5 )
+		self.DiceMenuSizer.Add( self.DicePackagePanel, 0, wx.ALL, 5 )
 
 		self.DiceDataPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
-			wx.DefaultPosition, wx.Size(250,300), wx.TAB_TRAVERSAL )
+			wx.DefaultPosition, wx.Size(250,200), wx.TAB_TRAVERSAL )
 		self.DiceDataPanel.SetupScrolling()
-		self.CenterSizer.Add( self.DiceDataPanel, 0, wx.ALL, 5 )
+		self.DiceMenuSizer.Add( self.DiceDataPanel, 0, wx.ALL, 5 )
 
-		self.MainSizer.Add( self.CenterSizer, 0, 0, 0 )
+		self.MainSizer.Add( self.DiceMenuSizer, 0, 0, 0 )
 
 		self.initSubmit()
 

@@ -79,7 +79,7 @@ class PlayerManager:
 			dice.setDice( DicePackage.basic[i] )
 			self.__dices.append(dice)
 
-	def prepare(self):
+	def diceShuffle(self):
 		random.shuffle(self.__dices)
 
 	def getDices(self, n=1):
