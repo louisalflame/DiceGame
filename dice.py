@@ -34,7 +34,7 @@ class DicePanel:
 	def getBase(self):
 		return self.__base
 
-	def getPanelID(self):
+	def getPanelId(self):
 		return self.__panelId
 
 	def getAttrImageSrc(self):
@@ -46,16 +46,23 @@ class DicePanel:
 	def getBaseImageSrc(self):
 		return "{0}.png".format( TowerBase.intToImageSrc(self.__base) )
 
+	def getBaseInfo(self):
+		return " {0: <2},{1} : {2} ".format(
+			str(self.__diceId), str(self.__panelId),
+			TowerBase.intToName(self.__base) )
+
+	def clone(self):
+		panel = DicePanel(self.__diceId, self.__panelId)
+		panel.setNumber(self.__number)
+		panel.setAttr(self.__attr)
+		panel.setBase(self.__base)
+		return panel
+
 	def __str__(self):
 		return " {0: <2},{1} :( {2: <10}:{3: <3}:{4} )".format( 
 			str(self.__diceId), str(self.__panelId),
 			DiceAttr.intToName(self.__attr),
 			str(self.__number), TowerBase.intToName(self.__base) )
-
-	def getBaseInfo(self):
-		return " {0: <2},{1} : {2} ".format(
-			str(self.__diceId), str(self.__panelId),
-			TowerBase.intToName(self.__base) )
 
 #========================
 # Dice 
@@ -75,6 +82,9 @@ class Dice:
 	def setDiceId(self, diceId):
 		self.__diceId = diceId
 
+	def getDiceId(self):
+		return self.__diceId
+
 	def getAllPanels(self):
 		return self.__panels
 
@@ -90,6 +100,15 @@ class Dice:
 	def refresh(self):
 		self.__used = False
 		self.__num = None
+
+	def clone(self):
+		dice = Dice(self.__diceId)
+		dice._Dice__size = self.__size
+		dice._Dice__used = self.__used
+		dice._Dice__num = self.__num
+		dice._Dice__type = self.__type
+		dice._Dice__panels = [ panel.clone() for panel in self.__panels ]
+		return dice
 
 	def __str__(self):
 		string = "size:"+str(self.__size)
@@ -117,3 +136,8 @@ class GameDice(Dice):
 
 	def getDiceTypeImageSrc(self):
 		return "{0}.png".format( DiceData.intToImageSrc(self._Dice__type) )
+
+	def clone(self):
+		dice = GameDice(self._Dice__diceId)
+		dice.setDice(self._Dice__type)
+		return dice

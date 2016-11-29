@@ -19,7 +19,7 @@ class MainFrame ( wx.Frame ):
 	def __init__( self, parent ):
 		wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, 
 			title = wx.EmptyString, pos = wx.DefaultPosition, 
-			size = wx.Size( 600,550 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+			size = wx.Size( 700,550 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )		
 		self.MainSizer = wx.BoxSizer( wx.VERTICAL )	
@@ -40,7 +40,7 @@ class MainFrame ( wx.Frame ):
 
 		self.MainPlayerSizer = wx.BoxSizer( wx.HORIZONTAL )
 		self.MainPlayerText = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString,
-			wx.DefaultPosition, wx.Size(200,50), wx.TE_READONLY )
+			wx.DefaultPosition, wx.Size(250,50), wx.TE_READONLY )
 		self.MainPlayerSizer.Add( self.MainPlayerText, 0, wx.ALL, 5 )
 		self.MainPlayerPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
 			wx.DefaultPosition, wx.Size(350,50), wx.TAB_TRAVERSAL )
@@ -54,7 +54,7 @@ class MainFrame ( wx.Frame ):
 
 		self.EnemyPlayerSizer = wx.BoxSizer( wx.HORIZONTAL )
 		self.EnemyPlayerText = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString,
-			wx.DefaultPosition, wx.Size(200,50), wx.TE_READONLY )
+			wx.DefaultPosition, wx.Size(250,50), wx.TE_READONLY )
 		self.EnemyPlayerSizer.Add( self.EnemyPlayerText, 0, wx.ALL, 5 )
 		self.EnemyPlayerPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
 			wx.DefaultPosition, wx.Size(350,50), wx.TAB_TRAVERSAL )
@@ -68,8 +68,12 @@ class MainFrame ( wx.Frame ):
 
 		self.DiceMenuSizer = wx.BoxSizer( wx.HORIZONTAL )
 		self.DicePackagePanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
-			wx.DefaultPosition, wx.Size(200,200), wx.TAB_TRAVERSAL )
+			wx.DefaultPosition, wx.Size(250,200), wx.TAB_TRAVERSAL )
 		self.DicePackagePanel.SetupScrolling()
+		self.DicePackageSizer = wx.FlexGridSizer( 0, 5, 0, 0 )
+		self.DicePackageSizer.SetFlexibleDirection( wx.VERTICAL )
+		self.DicePackageSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		self.DicePackagePanel.SetSizer( self.DicePackageSizer )
 		self.DiceMenuSizer.Add( self.DicePackagePanel, 0, wx.ALL, 5 )
 
 		self.DiceDataPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
@@ -105,9 +109,9 @@ class MainFrame ( wx.Frame ):
 		self.Layout()		
 
 	def initLabel(self):
-		self.MainLabel = wx.StaticText( self, wx.ID_ANY, u"                Dice Game --prototype--",
+		self.MainLabel = wx.StaticText( self, wx.ID_ANY, u" Dice Game --prototype--",
 			wx.Point( 200,0 ), wx.DefaultSize, 0 )
-		self.MainSizer.Add( self.MainLabel, 0, wx.ALL, 5 )
+		self.MainSizer.Add( self.MainLabel, 0, wx.ALIGN_CENTER|wx.ALL, 5 )
 
 	def initDiceSizer(self):
 		self.DiceViewSizer = wx.BoxSizer( wx.VERTICAL )
@@ -120,7 +124,6 @@ class MainFrame ( wx.Frame ):
 			wx.DefaultPosition, wx.Size( 250,50 ), wx.TAB_TRAVERSAL )
 		self.DiceInfoSizer = wx.BoxSizer( wx.HORIZONTAL )
 		self.DiceInfoPanel.SetSizer( self.DiceInfoSizer )
-		self.DiceInfoPanel.Layout()		
 		self.DiceViewSizer.Add( self.DiceInfoPanel, 0, wx.ALL, 5 )
 
 		self.DicesLabel = wx.StaticText( self, wx.ID_ANY, u" -- Dices View -- ",
@@ -130,9 +133,10 @@ class MainFrame ( wx.Frame ):
 		self.DicesPanel = wx.lib.scrolledpanel.ScrolledPanel( self, wx.ID_ANY, 
 			wx.DefaultPosition, wx.Size(250,120), wx.TAB_TRAVERSAL )
 		self.DicesPanel.SetupScrolling()
-		self.DicesPanelSizer = wx.BoxSizer( wx.VERTICAL )
+		self.DicesPanelSizer = wx.FlexGridSizer( 0, 5, 0, 0 )
+		self.DicesPanelSizer.SetFlexibleDirection( wx.VERTICAL )
+		self.DicesPanelSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 		self.DicesPanel.SetSizer( self.DicesPanelSizer )
-		self.DicesPanel.Layout()		
 		self.DiceViewSizer.Add( self.DicesPanel, 0, wx.ALL, 5 )
 
 		self.DicePlayLabel = wx.StaticText( self, wx.ID_ANY, u" -- Dice Result -- ",
@@ -143,7 +147,6 @@ class MainFrame ( wx.Frame ):
 			wx.DefaultPosition, wx.Size(250,100), wx.TAB_TRAVERSAL )
 		self.DicePlaySizer = wx.BoxSizer( wx.VERTICAL )
 		self.DicePlayPanel.SetSizer( self.DicePlaySizer )
-		self.DicePlayPanel.Layout()
 		self.DiceViewSizer.Add( self.DicePlayPanel, 0, wx.ALL, 5 )	
 
 		self.CenterSizer.Add( self.DiceViewSizer, 1, wx.ALL, 5 )

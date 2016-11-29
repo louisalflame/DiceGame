@@ -74,10 +74,6 @@ class PlayerManager:
 	def __init__(self):
 		self.__diceNum = 20
 		self.__dices = []
-		for i in range(self.__diceNum):
-			dice = GameDice(i)
-			dice.setDice( DicePackage.basic[i] )
-			self.__dices.append(dice)
 
 	def diceShuffle(self):
 		random.shuffle(self.__dices)
@@ -88,3 +84,8 @@ class PlayerManager:
 	def pushDice(self, dice):
 		dice.setDiceId( len(self.__dices) )
 		self.__dices.append(dice)
+
+	def removeDice(self, dice):
+		for d in self.__dices:
+			if dice.getDiceId() == d.getDiceId():
+				self.__dices.remove(d)

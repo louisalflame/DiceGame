@@ -42,9 +42,28 @@ class GameFrame(MainFrame):
 				sizer.Add( panelImage, 0, wx.ALL, 2 )
 			self.DiceDataSizer.Add( sizer, 0, wx.BOTTOM, 2 )
 
+	def showDicePackage(self, dicePackage):
+		self.DicePackageSizer.Clear(True)
+
+		for dice in dicePackage:
+			diceImage = wx.BitmapButton( self.DicePackagePanel, wx.ID_ANY, 
+				wx.Bitmap( wx.Image(u"panel/"+dice.getDiceTypeImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(30,30) ),
+				wx.DefaultPosition, wx.DefaultSize, 0 )
+			diceImage.Bind( wx.EVT_BUTTON, self.removeDiceOfPackage(dice) )
+			self.DicePackageSizer.Add( diceImage, 0, wx.BOTTOM, 2 )
+
+		self.MainSizer.Layout()
+
 	def pickDiceToPackage(self, dice):
 		def OnClick(event):
-			self.gm.pickDiceToPackage( dice )
+			self.gm.pickDiceToPackage( dice.clone() )
+			self.showDicePackage( self.gm.getDicePackage() )
+		return OnClick
+
+	def removeDiceOfPackage(self, dice):
+		def OnClick(event):
+			self.gm.removeDiceOfPackage( dice )
+			self.showDicePackage( self.gm.getDicePackage() )
 		return OnClick
 
 #==========================================================================
@@ -81,20 +100,13 @@ class GameFrame(MainFrame):
 	def showDicesPrepare(self, dicesPrepare):
 		self.DicesPanelSizer.Clear(True)
 		
-		for i in range( int( len(dicesPrepare)/5 ) ):
-			sizer = wx.BoxSizer( wx.HORIZONTAL )
-			for j in range(5):
-				if (i*5+j) >= len(dicesPrepare):
-					break
-				dice = dicesPrepare[i*5+j]
-				diceImage = wx.BitmapButton( self.DicesPanel, wx.ID_ANY, 
-					wx.Bitmap( wx.Image(u"panel/"+dice.getDiceTypeImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(30,30) ),
-					wx.DefaultPosition, wx.DefaultSize, 0 )
-				diceImage.Bind( wx.EVT_BUTTON, self.checkDiceInfo(dice) )
-				sizer.Add( diceImage, 0, wx.BOTTOM, 2 )
-			self.DicesPanelSizer.Add( sizer, 0, 0, 5 )
+		for dice in dicesPrepare:
+			diceImage = wx.BitmapButton( self.DicesPanel, wx.ID_ANY, 
+				wx.Bitmap( wx.Image(u"panel/"+dice.getDiceTypeImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(30,30) ),
+				wx.DefaultPosition, wx.DefaultSize, 0 )
+			diceImage.Bind( wx.EVT_BUTTON, self.checkDiceInfo(dice) )
+			self.DicesPanelSizer.Add( diceImage, 0, wx.BOTTOM, 2 )
 
-		self.DicesPanel.SetSizer( self.DicesPanelSizer )
 		self.MainSizer.Layout()
 
 	def showDicesField(self, dicesField):
@@ -118,7 +130,7 @@ class GameFrame(MainFrame):
 
 		self.DicePlaySizer.Add( diceSizer, 0, 0, 5 )
 		self.DicePlaySizer.Add( PanelSizer, 0, 0, 5 )
-		self.DicePlaySizer.Layout()
+		self.MainSizer.Layout()
 
 	def getBitmapByPath(self, path, height=20, width=20):
 		image = wx.Image(path, wx.BITMAP_TYPE_PNG)
@@ -130,7 +142,7 @@ class GameFrame(MainFrame):
 			self.DiceInfoSizer.Clear(True)
 			sizer = wx.BoxSizer( wx.HORIZONTAL )
 			for panel in dice.getAllPanels():
-				if not dice.isIdle() and panel.getPanelID() == dice.getNum():
+				if not dice.isIdle() and panel.getPanelId() == dice.getNum():
 					image = wx.Image( u"panel/"+panel.getAttrImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(50,50)
 				else:
 					image = wx.Image( u"panel/"+panel.getAttrImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(30,30)
@@ -140,7 +152,7 @@ class GameFrame(MainFrame):
 				sizer.Add( panelImage, 0, wx.ALL, 2 )
 
 			self.DiceInfoSizer.Add( sizer, 0, 0, 5 )
-			self.DiceInfoSizer.Layout()
+			self.MainSizer.Layout()
 		return OnClick
 
 	def pickPanel(self, dice):
