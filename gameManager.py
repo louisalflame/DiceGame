@@ -15,8 +15,9 @@ class GameManager:
 			"INIT" : 0, 
 			"PREPARE" : 1,
 			"START" : 2,
-			"THROW" : 3,
-			"COUNT" : 4,
+			"SETTING" : 3,
+			"THROW" : 4,
+			"COUNT" : 5,
 		}
 		self.status = self.STATUS["INIT"]
 
@@ -36,15 +37,21 @@ class GameManager:
 				self.gui.showText( "Please Select 20 or more Dices First..." )
 
 		elif self.status == self.STATUS["PREPARE"]:
-			self.status = self.STATUS["START"]			
+			self.status = self.STATUS["START"]
 			self.prepare()
 
 			self.gui.showDices( self.battle.showDices() )
 			self.gui.clearText()
-			self.gui.showText( "Press ENTER to throw dices..." )
+			self.gui.showText( "Press ENTER to Start Game..." )
 		elif self.status == self.STATUS["START"] or self.status == self.STATUS["COUNT"]:
-			self.status = self.STATUS["THROW"]
+			self.status = self.STATUS["SETTING"]
 			self.battle.startDiceField(5)
+
+			self.gui.showDices( self.battle.showDices() )
+			self.gui.clearText()
+			self.gui.showText( "Ready to throw these dices!" )
+		elif self.status == self.STATUS["SETTING"]:
+			self.status = self.STATUS["THROW"]
 			self.battle.throwDices()
 
 			self.gui.showDices( self.battle.showDices() )
@@ -58,7 +65,7 @@ class GameManager:
 			self.cleanDices()
 
 	def isInitialComplete(self):
-		return len( self.player.getDices() ) > 20
+		return len( self.player.getDices() ) >= 5
 
 	def removeDiceOfPackage(self, dice):
 		self.player.removeDice(dice)

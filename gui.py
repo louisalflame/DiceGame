@@ -115,18 +115,25 @@ class GameFrame(MainFrame):
 		diceSizer = wx.BoxSizer( wx.HORIZONTAL )
 		PanelSizer = wx.BoxSizer( wx.HORIZONTAL )
 		for dice in dicesField:
-			panel = dice.getPanel()
-			diceImage = wx.BitmapButton( self.DicePlayPanel, wx.ID_ANY, 
-				wx.Bitmap( wx.Image(u"panel/"+panel.getAttrImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(40,40) ),
-				wx.DefaultPosition, wx.DefaultSize, 0 )
-			diceImage.Bind( wx.EVT_BUTTON, self.checkDiceInfo( dice ) )
-			diceSizer.Add( diceImage, 0, wx.BOTTOM, 2 )
+			if not dice.isIdle():
+				panel = dice.getPanel()
+				diceImage = wx.BitmapButton( self.DicePlayPanel, wx.ID_ANY, 
+					wx.Bitmap( wx.Image(u"panel/"+panel.getAttrImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(40,40) ),
+					wx.DefaultPosition, wx.DefaultSize, 0 )
+				diceImage.Bind( wx.EVT_BUTTON, self.checkDiceInfo( dice ) )
+				diceSizer.Add( diceImage, 0, wx.BOTTOM, 2 )
 
-			panelImage = wx.BitmapButton( self.DicePlayPanel, wx.ID_ANY, 
-				wx.Bitmap( wx.Image(u"panel/"+panel.getBaseImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(40,40) ),
-				wx.DefaultPosition, wx.DefaultSize, 0 )
-			panelImage.Bind( wx.EVT_BUTTON, self.pickPanel( dice ) )
-			PanelSizer.Add( panelImage, 0, wx.BOTTOM, 2 )
+				panelImage = wx.BitmapButton( self.DicePlayPanel, wx.ID_ANY, 
+					wx.Bitmap( wx.Image(u"panel/"+panel.getBaseImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(40,40) ),
+					wx.DefaultPosition, wx.DefaultSize, 0 )
+				panelImage.Bind( wx.EVT_BUTTON, self.pickPanel( dice ) )
+				PanelSizer.Add( panelImage, 0, wx.BOTTOM, 2 )
+			else:
+				diceImage = wx.BitmapButton( self.DicePlayPanel, wx.ID_ANY, 
+					wx.Bitmap( wx.Image(u"panel/"+dice.getDiceTypeImageSrc(), wx.BITMAP_TYPE_PNG).Rescale(40,40) ),
+					wx.DefaultPosition, wx.DefaultSize, 0 )
+				diceImage.Bind( wx.EVT_BUTTON, self.checkDiceInfo( dice ) )
+				diceSizer.Add( diceImage, 0, wx.BOTTOM, 2 )
 
 		self.DicePlaySizer.Add( diceSizer, 0, 0, 5 )
 		self.DicePlaySizer.Add( PanelSizer, 0, 0, 5 )
