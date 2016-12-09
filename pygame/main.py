@@ -50,7 +50,7 @@ class WindowManager:
 def run():
     window = WindowManager( (800,600) )
     window.setTitle( "來寫遊戲吧！" )
-    window.setIcon(r"C:\Users\user\Desktop\DiceGame\panel\AttrAtk.png") 
+    window.setIcon(r"..\panel\DiceNor2.png") 
  
     while True:
         for event in pygame.event.get():
