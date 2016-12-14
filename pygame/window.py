@@ -3,7 +3,8 @@ import pygame
 from pygame.locals import *
 
 class WindowManager:
-    def __init__(self, size):
+    def __init__(self, game, size):
+        self.game = game
         self.size = size
         pygame.init()
         pygame.display.set_mode(self.size, 0, 32)

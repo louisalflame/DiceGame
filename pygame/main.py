@@ -2,26 +2,27 @@
  
 import pygame
 from pygame.locals import *
-import os
-from sys import exit
+import os, sys
 
-import util
+from manager import GameManager
 from scene import *
 from window import WindowManager
+import util
 
 def run():
-    window = WindowManager( (800,600) )
+    game = GameManager()
+    window = WindowManager( game, (800,600) )
     window.setTitle( "遊戲試作" )
     window.setIcon(r"..\panel\DiceAtk.png")
-    window.setScene( MenuScene(window) )
+    game.setWindow( window )
+    game.startScene( MenuScene(game, window) )
  
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
-                exit()
- 
+                sys.exit()
+
         window.draw()
         window.update()
  
-if __name__ == "__main__":
-    run()
+run()
