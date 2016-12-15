@@ -5,24 +5,19 @@ from pygame.locals import *
 import os, sys
 
 from manager import GameManager
-from scene import *
+from scene import MenuScene
 from window import WindowManager
 import util
 
 def run():
+    pygame.init()
     game = GameManager()
     window = WindowManager( game, (800,600) )
     window.setTitle( "遊戲試作" )
     window.setIcon(r"..\panel\DiceAtk.png")
     game.setWindow( window )
-    game.startScene( MenuScene(game, window) )
+    game.startSceneClass( MenuScene )
  
-    while True:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                sys.exit()
-
-        window.draw()
-        window.update()
+    game.loopGame()
  
 run()

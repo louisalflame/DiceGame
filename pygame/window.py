@@ -6,7 +6,6 @@ class WindowManager:
     def __init__(self, game, size):
         self.game = game
         self.size = size
-        pygame.init()
         pygame.display.set_mode(self.size, 0, 32)
 
     def setScene(self, scene):

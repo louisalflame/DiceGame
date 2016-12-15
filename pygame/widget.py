@@ -1,10 +1,10 @@
 #-*- coding: UTF-8 -*-
 import pygame
 from pygame.locals import *
-from util import *
 
 class PygameButton:
-    def __init__(self, image, size, position, func, argv=() ):
+    def __init__(self, game, image, size, position, func, argv=() ):
+        self.game = game
         self.size = size        
         self.image = pygame.image.load(image)
         self.pos = position
@@ -12,12 +12,10 @@ class PygameButton:
         self.argv = argv
 
     def draw(self):
-        cursor = Cursor( pygame.mouse.get_pos(), pygame.mouse.get_pressed() )
-        if cursor.isOverRect( self.pos, self.size ) and cursor.isLeftClick():
+        if self.game.cursor.isOverRect( self.pos, self.size ) and self.game.cursor.isLeftClick():
             image = pygame.transform.scale( self.image, (int(self.size[0]*1.2), int(self.size[1]*1.2)) )
             pos = ( self.pos[0]-int(self.size[0]*0.1), self.pos[1]-int(self.size[1]*0.1) )
-            self.func( *self.argv )
-        elif cursor.isOverRect( self.pos, self.size ):
+        elif self.game.cursor.isOverRect( self.pos, self.size ):
             image = pygame.transform.scale( self.image, (int(self.size[0]*1.1), int(self.size[1]*1.1)) )
             pos = ( self.pos[0]-int(self.size[0]*0.05), self.pos[1]-int(self.size[1]*0.05) )
         else:
@@ -28,9 +26,6 @@ class PygameButton:
         screen.blit(image, pos)
 
     def update(self):
-        pass
-
-        '''
-        font = util.font_MsjhBd(80)
-        text = font.render(str("按鈕一"), True, pygame.color.Color("white"))
-        '''
+        if self.game.cursor.isOverRect( self.pos, self.size ) and \
+            not self.game.cursor.isLeftClick() and self.game.lastCursor.isLeftClick():
+            self.func( *self.argv )
