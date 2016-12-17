@@ -24,13 +24,13 @@ class MenuScene(Scene):
         super().__init__(game, window)
 
         self.widgets.append( 
-            PygameButton( self.game, r"..\panel\DiceAtk3.png", (120,120), (300,100), 
+            PygameButton( self.game, r"panel\DiceAtk3.png", (120,120), (300,100), 
                           self.game.startSceneClass, [battleScene] ) )
         self.widgets.append( 
-            PygameButton( self.game, r"..\panel\DiceSpc3.png", (120,120), (300,250), 
+            PygameButton( self.game, r"panel\DiceSpc3.png", (120,120), (300,250), 
                           self.game.startSceneClass, [EquipScene] ) )
         self.widgets.append( 
-            PygameButton( self.game, r"..\panel\DiceMov3.png", (120,120), (300,400), 
+            PygameButton( self.game, r"panel\DiceMov3.png", (120,120), (300,400), 
                           self.game.exit ) )
 
     def draw(self):
@@ -48,7 +48,7 @@ class battleScene(Scene):
         super().__init__(game, window)
         
         self.widgets.append( 
-            PygameButton( self.game, r"..\panel\DiceDef.png", (60,60), (30,30), 
+            PygameButton( self.game, r"panel\DiceDef.png", (60,60), (30,30), 
                           self.game.backScene ) )
 
     def draw(self):
@@ -65,7 +65,7 @@ class EquipScene(Scene):
         super().__init__(game, window)
 
         self.widgets.append( 
-            PygameButton( self.game, r"..\panel\DiceDef.png", (60,60), (30,30), 
+            PygameButton( self.game, r"panel\DiceDef.png", (60,60), (30,30), 
                           self.game.backScene ) )
 
     def draw(self):

@@ -14,7 +14,7 @@ def run():
     game = GameManager()
     window = WindowManager( game, (800,600) )
     window.setTitle( "遊戲試作" )
-    window.setIcon(r"..\panel\DiceAtk.png")
+    window.setIcon(r"panel\DiceAtk.png")
     game.setWindow( window )
     game.startSceneClass( MenuScene )
  
