@@ -3,14 +3,17 @@ import pygame
 from pygame.locals import *
 import sys
 
-from scene import *
+from scene import MenuScene, battleScene, EquipScene
 from util import *
+from data import DiceData
+from dice import AttrDice
 
 class GameManager:
     def __init__(self):
         self.sceneStack = []
         self.cursor = Cursor()
         self.lastCursor = Cursor()
+        self.equip = EquipmentManager(self)
 
     def loopGame(self):        
         while True:
@@ -42,20 +45,47 @@ class GameManager:
     def backScene(self):
         if len(self.sceneStack) < 2:
             return None
-
         self.sceneStack.pop().remove()
         self.window.setScene( self.sceneStack[-1] )
 
+    def startBattle(self):
+        teamPlayer = TeamManager( self.equip )
+        self.battle = BattleManager( self, teamPlayer, None )
+
+    def endBattle(self):
+        self.battle = None
+
+    def test(self):
+        print ( [ dice.getDiceTypeImageSrc() for dice in self.battle.teamPlayer.dices ] )
+
+
+#========================
+# battle
+#========================
+class EquipmentManager:
+    def __init__(self, game):
+        self.game = game
+        self.dices = [
+            DiceData.NormalDice,
+            DiceData.NormalDice,
+            DiceData.NormalDice,
+            DiceData.AttackDice,
+        ]
 
 class BattleManager:
-    def __init__(self):
-        self.teamA = None
-        self.teamB = None
+    def __init__(self, game, teamPlayer, teamEnemy ):
+        self.game = game
+        self.teamPlayer = teamPlayer
+        self.teamEnemy = teamEnemy
 
 class TeamManager:
-    def __init__(self):
-        self.attr = None
+    def __init__(self, equip):
+        self.attr = None  
         self.tower = None
         self.player = None
-        self.dices = None
+        self.dices = []
+        for i, diceType in enumerate(equip.dices):
+            dice = AttrDice(i)
+            dice.setDiceType(diceType)
+            self.dices.append( dice )
 

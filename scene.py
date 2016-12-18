@@ -47,9 +47,17 @@ class battleScene(Scene):
     def __init__(self, game, window):
         super().__init__(game, window)
         
+        self.game.startBattle()
+
         self.widgets.append( 
             PygameButton( self.game, r"panel\DiceDef.png", (60,60), (30,30), 
                           self.game.backScene ) )
+        self.widgets.append( 
+            PygameButton( self.game, r"panel\DiceSpc2.png", (60,60), (600,500), 
+                          self.game.test ) )
+    def remove(self):
+        super().remove()
+        self.game.endBattle()
 
     def draw(self):
         screen = pygame.display.get_surface()
