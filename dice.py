@@ -1,4 +1,4 @@
-#-*- coding: UTF-8 -*-
+ #-*- coding: UTF-8 -*-
 import random
 from attr import DiceAttr, TowerAttr
 from data import DiceData
@@ -36,8 +36,6 @@ class GameDice:
         self.used   = False
         self.number = None
         self.type   = None
-        for i in range(self.size):
-            self.faces.append( DiceFace(diceId, i) )
 
     def getFace(self):
         return self.faces[ self.getNum() ]
@@ -70,9 +68,10 @@ class AttrDice(GameDice):
 
     def setDiceType(self, diceType):
         self.type = diceType
+        self.size = len(self.type.value['info'])
 
-        for i, face in zip(range(self.size), self.type.value):
-            self.faces[i] = DiceFace( self.diceId, i, face[1], face[0], face[2] )
+        for i, face in enumerate(self.type.value['info']):
+            self.faces.append( DiceFace( self.diceId, i, face[1], face[0], face[2] ) )
 
-    def getDiceTypeImageSrc(self):
-        return "Dice{0}.png".format( self.type.name )
+    def getDiceTypeImage(self):
+        return self.type.value['img']

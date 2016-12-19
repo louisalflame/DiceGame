@@ -29,3 +29,24 @@ class PygameButton:
         if self.game.cursor.isOverRect( self.pos, self.size ) and \
             not self.game.cursor.isLeftClick() and self.game.lastCursor.isLeftClick():
             self.func( *self.argv )
+
+class DicesBoxBar:
+    def __init__(self, game):
+        self.game = game
+        self.dices = []
+
+        self.getDices()
+
+    def getDices(self):
+        for dice in self.game.battle.teamPlayer.dices["box"]:
+            image = pygame.transform.scale( dice.getDiceTypeImage().value, (40,40) )
+            self.dices.append( image )
+
+    def update(self):
+        pass
+
+    def draw(self):
+        screen = pygame.display.get_surface()
+
+        for i, diceImage in enumerate( self.dices ):
+            screen.blit(diceImage, (10, 400-i*50) )

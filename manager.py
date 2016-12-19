@@ -11,6 +11,7 @@ from dice import AttrDice
 class GameManager:
     def __init__(self):
         self.sceneStack = []
+        self.currentScene = None
         self.cursor = Cursor()
         self.lastCursor = Cursor()
         self.equip = EquipmentManager(self)
@@ -36,6 +37,7 @@ class GameManager:
         self.window = window
 
     def startScene(self, scene):
+        self.currentScene = scene
         self.sceneStack.append( scene )
         self.window.setScene( scene )
 
@@ -56,8 +58,13 @@ class GameManager:
         self.battle = None
 
     def test(self):
-        print ( [ dice.getDiceTypeImageSrc() for dice in self.battle.teamPlayer.dices ] )
+        # print ( [ dice.getDiceTypeImageSrc() for dice in self.battle.teamPlayer.dices["box"] ] )
+        self.battle.prepare()
+        self.currentScene.setMode(1)
 
+    def test2(self):
+        #print ( [ dice.getDiceTypeImageSrc() for dice in self.battle.teamPlayer.dices["box"] ] )
+        print(123)
 
 #========================
 # battle
@@ -66,10 +73,12 @@ class EquipmentManager:
     def __init__(self, game):
         self.game = game
         self.dices = [
-            DiceData.NormalDice,
-            DiceData.NormalDice,
-            DiceData.NormalDice,
-            DiceData.AttackDice,
+            DiceData.Nor, DiceData.Nor, DiceData.Nor,
+            DiceData.Atk, DiceData.Atk, DiceData.Atk,
+            DiceData.Def, DiceData.Def, DiceData.Def,
+            DiceData.Mov, DiceData.Mov, DiceData.Mov,
+            DiceData.Spc, DiceData.Spc, DiceData.Spc,
+            DiceData.Heal, DiceData.Heal, DiceData.Heal,
         ]
 
 class BattleManager:
@@ -78,14 +87,22 @@ class BattleManager:
         self.teamPlayer = teamPlayer
         self.teamEnemy = teamEnemy
 
+
+    def prepare(self):
+        self.teamPlayer.shuffleDices()
+
 class TeamManager:
     def __init__(self, equip):
         self.attr = None  
         self.tower = None
         self.player = None
-        self.dices = []
+        self.dices = { "box":[], "play":[], "used":[] }
         for i, diceType in enumerate(equip.dices):
             dice = AttrDice(i)
             dice.setDiceType(diceType)
-            self.dices.append( dice )
+            self.dices["box"].append( dice )
+
+    def shuffleDices(self):
+        import random
+        random.shuffle(self.dices["box"])
 
