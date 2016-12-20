@@ -60,7 +60,7 @@ class GameManager:
     def test(self):
         # print ( [ dice.getDiceTypeImageSrc() for dice in self.battle.teamPlayer.dices["box"] ] )
         self.battle.prepare()
-        self.currentScene.setMode(1)
+        self.currentScene.mode = 1
 
     def test2(self):
         #print ( [ dice.getDiceTypeImageSrc() for dice in self.battle.teamPlayer.dices["box"] ] )

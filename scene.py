@@ -49,10 +49,9 @@ class battleScene(Scene):
         super().__init__(game, window)
         
         self.game.startBattle()
-        self.setMode(0)
+        self.mode = 0
 
-    def setMode(self, mode):
-        self.mode = mode
+    def updateMode(self):
         if self.mode == 0:
             self.widgets[ "back" ] = PygameButton( 
                 self.game, r"panel\DiceDef.png", (60,60), (600,400), 
@@ -60,8 +59,6 @@ class battleScene(Scene):
             self.widgets[ "test" ] = PygameButton( 
                 self.game, r"panel\DiceSpc.png", (60,60), (600,500), 
                 self.game.test )
-            self.widgets[ "dicePackage" ] = DicesBoxBar(
-                self.game )
         elif self.mode == 1:
             self.widgets[ "dicePackage" ] = DicesBoxBar(
                 self.game )
@@ -80,6 +77,7 @@ class battleScene(Scene):
 
     def update(self):
         super().update()
+        self.updateMode()
 
             
 class EquipScene(Scene):
