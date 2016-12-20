@@ -16,7 +16,7 @@ def run():
     window.setTitle( "遊戲試作" )
     window.setIcon(r"panel\DiceAtk.png")
     game.setWindow( window )
-    game.startSceneClass( MenuScene )
+    game.setNextScene( MenuScene )
  
     game.loopGame()
  
