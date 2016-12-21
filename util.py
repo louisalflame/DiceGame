@@ -4,9 +4,6 @@ import pygame
 from pygame.locals import *
 import os
 
-def font_MsjhBd(size):
-    return pygame.font.Font(os.environ['SYSTEMROOT'] + "\\Fonts\\msjhbd.ttf", size)
-
 class Cursor:
     def __init__(self, pos=(0,0), pressed=(0,0,0)):
         self.x = pos[0]
@@ -20,3 +17,11 @@ class Cursor:
 
     def isLeftClick(self):
         return self.leftClick
+
+def font_MsjhBd(size):
+    return pygame.font.Font(os.environ['SYSTEMROOT'] + "\\Fonts\\msjhbd.ttf", size)
+
+def imageTransparent(image, percent):
+    image = image.convert()
+    image.set_alpha( int( 256 * percent ) )
+    return image

@@ -30,3 +30,11 @@ class AttrImage(Enum):
     NorHeal1 = pygame.image.load( r"panel\NorBaseHeal1.png" )
     NorHeal2 = pygame.image.load( r"panel\NorBaseHeal2.png" )
     NorHeal3 = pygame.image.load( r"panel\NorBaseHeal3.png" )
+
+class TowerImage(Enum):
+    NorTower = pygame.image.load( r"panel\NorTower.png" )
+    AtkTower = pygame.image.load( r"panel\\AtkTower.png" )
+    DefTower = pygame.image.load( r"panel\DefTower.png" )
+    MovTower = pygame.image.load( r"panel\MovTower.png" )
+    SpcTower = pygame.image.load( r"panel\SpcTower.png" )
+    HealTower = pygame.image.load( r"panel\HealTower.png" )

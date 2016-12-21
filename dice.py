@@ -1,6 +1,5 @@
  #-*- coding: UTF-8 -*-
 import random
-from attr import DiceAttr, TowerAttr
 from data import DiceData
 
 class DiceFace:
@@ -18,7 +17,7 @@ class DiceFace:
         return self.faceData.value['img'].value
 
     def getTowerAttrImageSrc(self):
-        return "{0}.png".format( TowerAttr.intToImageSrc(self.__base) )
+        return 
 
     def clone(self):
         return DiceFace(self.diceId, self.faceId, self.faceData)
