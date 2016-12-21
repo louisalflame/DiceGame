@@ -4,25 +4,24 @@ from attr import DiceAttr, TowerAttr
 from data import DiceData
 
 class DiceFace:
-    def __init__(self, diceId, faceId, num=1, attr=DiceAttr.Nor, base=TowerAttr.Nor):
+    def __init__(self, diceId, faceId, faceData ):
         self.diceId = diceId
         self.faceId = faceId
 
-        self.number = num
-        self.attr   = attr
-        self.base   = base
+        self.faceData = faceData
+        self.number = faceData.value['num']
+        self.attr   = faceData.value['attr']
+        self.base   = faceData.value['base']
+        self.image  = faceData.value['img']
 
-    def getAttrImageSrc(self):
-        return "{0}Base{1}{2}.png".format(
-            self.base.name,
-            self.attr.name,
-            self.number )
+    def getFaceAttrImage(self):
+        return self.faceData.value['img'].value
 
     def getTowerAttrImageSrc(self):
         return "{0}.png".format( TowerAttr.intToImageSrc(self.__base) )
 
     def clone(self):
-        return DiceFace(self.diceId, self.faceId, self.number, self.attr, self.base)
+        return DiceFace(self.diceId, self.faceId, self.faceData)
 
 #========================
 # Dice 
@@ -53,8 +52,9 @@ class GameDice:
         self.used = False
         self.number = None
 
-    def clone(self):
-        dice = Dice(self.diceId)
+    def clone(self, dice=None ):
+        if not dice:
+            dice = GameDice(self.diceId)
         dice.size   = self.size
         dice.used   = self.used
         dice.number = self.number
@@ -70,8 +70,12 @@ class AttrDice(GameDice):
         self.type = diceType
         self.size = len(self.type.value['info'])
 
-        for i, face in enumerate(self.type.value['info']):
-            self.faces.append( DiceFace( self.diceId, i, face[1], face[0], face[2] ) )
+        for i, faceData in enumerate(self.type.value['info']):
+            self.faces.append( DiceFace( self.diceId, i, faceData ) )
+
+    def clone(self):
+        dice = super().clone(AttrDice(self.diceId))
+        return dice
 
     def getDiceTypeImage(self):
-        return self.type.value['img']
+        return self.type.value['img'].value

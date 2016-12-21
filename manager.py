@@ -1,7 +1,7 @@
 #-*- coding: UTF-8 -*-
 import pygame
 from pygame.locals import *
-import sys
+import sys, time
  
 from scene import MenuScene, battleScene, EquipScene
 from util import *
@@ -21,7 +21,7 @@ class GameManager:
             for event in pygame.event.get():
                 if event.type == QUIT:
                     self.exit()
- 
+
             self.update()
             self.window.draw()
             self.window.update()
@@ -30,8 +30,11 @@ class GameManager:
         sys.exit()
  
     def update(self):
+        pygame.time.Clock().tick(100)
+        #update cursor position
         self.lastCursor = self.cursor
         self.cursor = Cursor( pygame.mouse.get_pos(), pygame.mouse.get_pressed() )
+        #update scene if nextscene is waiting
         if self.nextScene != None:
             if self.currentScene:
                 self.currentScene.remove()

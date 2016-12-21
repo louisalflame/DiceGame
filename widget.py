@@ -47,6 +47,7 @@ class DicesBoxBar(PygameWidget):
         prepare  = 1
         dropping = 2
         ready    = 3
+    imageSize = (40,40)
     def __init__(self, game):
         super().__init__(game)
         self.boxSize = 10
@@ -58,13 +59,12 @@ class DicesBoxBar(PygameWidget):
     def getDices(self):
         self.dices = []
         for dice in self.game.battle.teamPlayer.dices["box"]:
-            image = pygame.transform.scale( dice.getDiceTypeImage().value, (40,40) )
-            self.dices.append( image )
+            self.dices.append( dice.clone() )
 
     def update(self):
         self.getDices()
         self.boxSize = min(10, len(self.dices))
-        if self.mode == self.BoxMode.prepare and self.frame > 100:
+        if self.mode == self.BoxMode.prepare and self.frame > 50:
             self.frame = 0
             self.mode = self.BoxMode.dropping
         self.frame += 1
@@ -73,20 +73,23 @@ class DicesBoxBar(PygameWidget):
         screen = pygame.display.get_surface()
         if self.mode == self.BoxMode.prepare:
             pass
+        #draw dice details if cursor over
         elif self.mode == self.BoxMode.ready:
             for i in range(self.boxSize):
+                image = self.getDiceTypeImage(self.dices[i])
                 pos = (400-i*50)
-                screen.blit(self.dices[i], (10, pos) ) 
-                if self.game.cursor.isOverRect( (10, pos), (40,40) ):                    
-                    screen.blit(self.dices[i], (10+45, pos) ) 
+                screen.blit(image, (10, pos) ) 
+                if self.game.cursor.isOverRect( (10, pos), self.imageSize ):
+                    img = self.getDiceAttrImages(self.dices[i])                
+                    screen.blit(img, (10+45, pos) )
+        #draw dices dropping from top
         elif self.mode == self.BoxMode.dropping:
-            dropDist = 8 * self.frame
+            dropDist = 100 * self.frame
             for i in range(self.boxSize):
-                image = self.dices[i]
+                image = self.getDiceTypeImage(self.dices[i])
                 pos = (400-i*50)
-                dist = pos-(-100)
-                if dropDist >= dist:
-                    dropDist -= dist
+                if dropDist >= pos-(-100):
+                    dropDist -= pos-(-100)
                 else:
                     pos = dropDist-100
                     dropDist = 0
@@ -97,6 +100,14 @@ class DicesBoxBar(PygameWidget):
                 self.mode = self.BoxMode.ready
                 self.ready = True
 
+    def getDiceTypeImage(self, dice):
+        image = dice.getDiceTypeImage().copy()
+        return pygame.transform.scale( image, self.imageSize )
+
+    def getDiceAttrImages(self, dice):
+        image = dice.faces[0].getFaceAttrImage()
+        return pygame.transform.scale( image, self.imageSize )
+
 class DicesPlayBar(PygameWidget):
     def __init__(self, game):
         super().__init__(game)
@@ -105,7 +116,7 @@ class DicesPlayBar(PygameWidget):
     def getDices(self):
         self.dices = []
         for dice in self.game.battle.teamPlayer.dices["play"]:
-            image = pygame.transform.scale( dice.getDiceTypeImage().value, (60,60) )
+            image = pygame.transform.scale( dice.getDiceTypeImage(), (60,60) )
             self.dices.append( image )
 
     def update(self):
