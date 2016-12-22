@@ -69,8 +69,10 @@ class battleScene(Scene):
         elif self.mode == 1:
             self.widgets[ "diceBox" ] = DicesBoxBar( self.game )
         elif self.mode == 2:
-            self.widgets[ "diceBox" ].getDices()
             self.widgets[ "dicePlay" ] = DicesPlayBar( self.game )
+            self.widgets[ "throw" ] = PygameButton(
+                self.game, r"panel\DiceAtk2.png", (60,60), (400,450),
+                self.game.battle.throw )
  
     def remove(self):
         super().remove()

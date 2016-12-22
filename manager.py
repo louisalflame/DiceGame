@@ -93,6 +93,9 @@ class BattleManager:
 
     def popDices(self):
         self.teamPlayer.popDices(5)
+
+    def throw(self):
+        self.teamPlayer.throw()
  
 class TeamManager:
     def __init__(self, equip):
@@ -112,3 +115,7 @@ class TeamManager:
     def popDices(self, n):
         for i in range(n):
             self.dices["play"].append( self.dices["box"].pop(0) )
+
+    def throw(self):
+        for dice in self.dices["play"]:
+            dice.throw()

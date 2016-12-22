@@ -55,7 +55,7 @@ class DicesBoxBar(PygameWidget):
     imgInterval = 10
     detailBorder = 2
     dropSpeed   = 100
-    detailSpeed = 20
+    detailSpeed = 10
     prepareTime = 20
     class BoxMode(Enum):
         prepare  = 1
@@ -66,68 +66,72 @@ class DicesBoxBar(PygameWidget):
         super().__init__(game)
         self.boxSize = 10
         self.dices = []
+        self.diceImages = []
+        self.detailImages = []
         self.ready = False
         self.mode = self.BoxMode.prepare
         self.frame = 0
 
-    def getDices(self):
-        self.dices = []
-        for dice in self.game.battle.teamPlayer.dices["box"]:
-            self.dices.append( dice.clone() )
-
     def update(self):
-        self.getDices()
-        self.boxSize = min( self.maxBoxSize, len(self.dices))
+        self.resetDices()
+
         if self.mode == self.BoxMode.prepare and self.frame > self.prepareTime:
-            self.frame = 0
             self.mode = self.BoxMode.dropping
+            self.frame = 0
+        #draw dice details if cursor over
+        elif self.mode == self.BoxMode.ready:
+            self.updateReadyDices()
+        #draw dices dropping from top
+        elif self.mode == self.BoxMode.dropping:
+            self.updateDroppingDices()
+
         self.frame += 1
 
     def draw(self):
-        if self.mode == self.BoxMode.prepare:
-            pass
-        #draw dice details if cursor over
-        elif self.mode == self.BoxMode.ready:
-            self.drawReadyDices()
-        #draw dices dropping from top
-        elif self.mode == self.BoxMode.dropping:
-            self.drawDroppingDices()
-
-    def drawReadyDices(self):
         screen = pygame.display.get_surface()
+        if self.mode == self.BoxMode.ready:
+            for image, pos in self.detailImages:
+                screen.blit(image, pos)
+        for image, pos in self.diceImages:
+            screen.blit(image, pos)
+
+    def resetDices(self):
+        self.dices = []
+        self.diceImages = []
+        self.detailImages = []
+        for dice in self.game.battle.teamPlayer.dices["box"]:
+            self.dices.append( dice.clone() )
+        self.boxSize = min( self.maxBoxSize, len(self.dices))
+
+    def updateReadyDices(self):
         for i in range(self.boxSize):
             image = self.getDiceTypeImage(self.dices[i])
             pos = self.countDicePos(i)
-            screen.blit(image, (self.boxLeft, pos) )
-            self.drawDiceDetailShowing(i, pos)
+            self.diceImages.append( (image, (self.boxLeft, pos)) )
+            if self.game.cursor.isOverRect( (self.boxLeft, pos), self.imgSize ):
+                self.updateDiceDetailShowing(i, pos)
 
-    def drawDiceDetailShowing(self, i, pos):
-        if not self.game.cursor.isOverRect( (self.boxLeft, pos), self.imgSize ):
-            return
+    def updateDiceDetailShowing(self, i, pos):
         def detailReadyPos(self, j):
             return self.boxLeft+self.imgInterval+self.imgWidth*(j+1)+self.detailBorder*j
         def detailRunningPos(self, j, detailDist):
             return self.boxLeft+self.imgInterval+detailDist+self.detailBorder*j
 
-        screen = pygame.display.get_surface()
         #first over, reset the detail progress
-        if not self.game.lastCursor.isOverRect( (self.boxLeft, pos), self.imgSize ) or \
-            self.frame < 0:
+        if not self.game.lastCursor.isOverRect( (self.boxLeft, pos), self.imgSize ):
             self.frame = 0
-        else:
-            images = self.getDiceAttrImages(self.dices[i])   
-            detailDist = self.frame * self.detailSpeed
-            for j in range(6):
-                j = 5-j
-                if detailDist > (j+1)*self.imgWidth:             
-                    screen.blit( images[j],  (detailReadyPos(self, j), pos) )
-                elif detailDist > j*self.imgWidth:
-                    percent =  0.5*(detailDist - j*self.imgWidth)/self.imgWidth
-                    screen.blit( imageTransparent(images[j], percent), 
-                        (detailRunningPos(self, j, detailDist), pos) )
 
-    def drawDroppingDices(self):
-        screen = pygame.display.get_surface()
+        images = self.getDiceAttrImages(self.dices[i])   
+        detailDist = self.frame * self.detailSpeed
+        for j in range(6):
+            if detailDist > (j+1)*self.imgWidth:
+                self.detailImages.insert( 0, ( images[j],  (detailReadyPos(self, j), pos) ) )
+            elif detailDist > j*self.imgWidth:
+                percent =  0.5*(detailDist - j*self.imgWidth)/self.imgWidth
+                self.detailImages.insert( 0, ( imageTransparent(images[j], percent), 
+                                               (detailRunningPos(self, j, detailDist), pos) ) )
+
+    def updateDroppingDices(self):
         dropDist = self.dropSpeed * self.frame
         for i in range(self.boxSize):
             image = self.getDiceTypeImage(self.dices[i])
@@ -138,11 +142,11 @@ class DicesBoxBar(PygameWidget):
                 pos = dropDist+self.boxTop
                 dropDist = 0
                 image = imageTransparent(image, 0.5)
-            screen.blit(image, (self.boxLeft, pos))
+            self.diceImages.append( (image, (self.boxLeft, pos) ) )
         if dropDist > 0:
             self.mode = self.BoxMode.ready
             self.ready = True
-            self.frame = -10
+            self.frame = 0
 
     def countDicePos(self, i):
         return self.boxBottom-i*(self.imgHeight+self.imgInterval)
@@ -159,20 +163,32 @@ class DicesBoxBar(PygameWidget):
         return images
 
 class DicesPlayBar(PygameWidget):
+    boxLeft     = 10
+    boxTop      = 450
+    imageWidth  = 60
+    imageHeight = 60
+    imageSize   = (60,60)
+    imageBorder = 15
     def __init__(self, game):
         super().__init__(game)
-        self.getDices()
-
-    def getDices(self):
         self.dices = []
-        for dice in self.game.battle.teamPlayer.dices["play"]:
-            image = pygame.transform.scale( dice.getDiceTypeImage(), (60,60) )
-            self.dices.append( image )
+        self.diceImages = []
 
     def update(self):
-        pass
+        self.getDices()
 
     def draw(self):
         screen = pygame.display.get_surface()
-        for i, diceImage in enumerate( self.dices ):
-            screen.blit(diceImage, (10+i*70, 520) )
+        for image, pos in self.diceImages:
+            screen.blit(image, pos)
+
+    def getDices(self):
+        self.dices = []
+        self.diceImages = []
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices["play"]):
+            if dice.isIdle():
+                image = dice.getDiceTypeImage().copy()
+            else:
+                image = dice.getFace().getFaceAttrImage().copy()
+            self.diceImages.append( ( pygame.transform.scale(image, self.imageSize), 
+                (self.boxLeft+i*(self.imageBorder+self.imageWidth), self.boxTop) ) )

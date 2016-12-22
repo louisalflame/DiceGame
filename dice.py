@@ -36,16 +36,17 @@ class GameDice:
         self.type   = None
 
     def getFace(self):
-        return self.faces[ self.getNum() ]
+        return self.faces[ self.number ] if not self.isIdle() else None
 
     def getNum(self):
-        if self.isIdle():
-            self.number = random.randint(0,5)
-            self.used = True
-        return self.number
+        return self.number if not self.isIdle() else None
 
     def isIdle(self):
-        return not self.__used
+        return not self.used
+
+    def throw(self):
+        self.number = random.randint(0, self.size-1)
+        self.used = True
 
     def refresh(self):
         self.used = False
