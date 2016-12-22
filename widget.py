@@ -207,14 +207,14 @@ class TeamInfoBox(PygameWidget):
     imgBorder = 2
     def __init__(self, game):
         super().__init__(game)
-        self.attrs = {        
-            "Nor" : { 'img': AttrImage.Nor, 'num': 0 },
-            "Atk" : { 'img': AttrImage.Atk, 'num': 0 },
-            "Def" : { 'img': AttrImage.Def, 'num': 4 },
-            "Mov" : { 'img': AttrImage.Mov, 'num': 0 },
-            "Spc" : { 'img': AttrImage.Spc, 'num': 5 },
-            "Heal": { 'img': AttrImage.Heal,'num': 0 },
-        }
+        self.attrs = [
+            { "name": "Nor", "img": AttrImage.Nor, 'num': 0 },
+            { "name": "Atk", "img": AttrImage.Atk, 'num': 0 },
+            { "name": "Def", "img": AttrImage.Def, 'num': 0 },
+            { "name": "Mov", "img": AttrImage.Mov, 'num': 0 },
+            { "name": "Spc", "img": AttrImage.Spc, 'num': 0 },
+            { "name": "Heal", "img": AttrImage.Heal, 'num': 0 },
+        ]
 
     def update(self):
         self.resetAttr()
@@ -223,23 +223,22 @@ class TeamInfoBox(PygameWidget):
         def countPos(self, i):
             return self.boxLeft+i*(self.imgBorder+self.imgWidth)
         screen = pygame.display.get_surface()
-        i = 0
-        for key, attr in self.attrs.items():
+        for i, attr in enumerate(self.attrs):
             screen.blit( pygame.transform.scale(attr['img'].value, self.imgSize), 
                          (countPos(self, i), self.imgTop) )
             pygame.draw.rect(screen, pygame.color.Color("black"), 
-                (countPos(self, i), self.imgTop+self.imgHeight, 
-                 self.imgWidth, self.imgHeight*0.8), 0)
+                (countPos(self, i), self.imgTop+self.imgHeight+self.imgBorder, 
+                 self.imgWidth, self.imgHeight*0.6), 0)
 
-            font = pygame.font.SysFont("comicsansms", 72)
+            font = pygame.font.SysFont("comicsansms", 20)
             text = font.render( str(attr['num']), True, pygame.color.Color("white"))
-            text = pygame.transform.scale(text, (48,int(48*0.8)))
-            screen.blit( text, (countPos(self, i), self.imgTop+self.imgHeight) )
-            i += 1
+            text = pygame.transform.scale(text, (text.get_width(),int(48*0.6)))
+            screen.blit( text, (countPos(self, i+0.8)-text.get_width(), 
+                                self.imgTop+self.imgHeight) )
 
     def resetAttr(self):
-        for key, val in self.attrs.items():
-            self.attrs[key]['num'] = self.game.battle.teamPlayer.attr[key]
+        for attr in self.attrs:
+            attr['num'] = self.game.battle.teamPlayer.attr[ attr['name'] ]
 
 
 
