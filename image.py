@@ -12,6 +12,13 @@ class DiceImage(Enum):
     DiceHeal = pygame.image.load( r"panel\DiceHeal.png" )
 
 class AttrImage(Enum):
+    Nor = pygame.image.load( r"panel\\AttrNor.png" )
+    Atk = pygame.image.load( r"panel\\AttrAtk.png" )
+    Def = pygame.image.load( r"panel\\AttrDef.png" )
+    Mov = pygame.image.load( r"panel\\AttrMov.png" )
+    Spc = pygame.image.load( r"panel\\AttrSpc.png" )
+    Heal = pygame.image.load( r"panel\\AttrHeal.png" )
+
     NorNor1 = pygame.image.load( r"panel\NorBaseNor1.png" )
     NorNor2 = pygame.image.load( r"panel\NorBaseNor2.png" )
     NorNor3 = pygame.image.load( r"panel\NorBaseNor3.png" )

@@ -2,7 +2,7 @@
 import pygame
 from pygame.locals import *
  
-from widget import PygameButton, DicesBoxBar, DicesPlayBar
+from widget import PygameButton, DicesBox, DicesPlayBox, TeamInfoBox
 import util
  
 class Scene:
@@ -61,15 +61,16 @@ class battleScene(Scene):
         self.mode = self.nextMode
         if self.mode == 0:
             self.widgets[ "back" ] = PygameButton( 
-                self.game, r"panel\DiceDef.png", (60,60), (600,400), 
+                self.game, r"panel\DiceDef.png", (40,40), (750,10), 
                 self.game.setNextScene, [MenuScene] )
             self.widgets[ "updateStage" ] = PygameButton( 
-                self.game, r"panel\DiceSpc.png", (60,60), (600,500), 
+                self.game, r"panel\DiceSpc.png", (40,40), (700,10), 
                 self.game.battle.updateStage )
         elif self.mode == 1:
-            self.widgets[ "diceBox" ] = DicesBoxBar( self.game )
+            self.widgets[ "diceBox" ] = DicesBox( self.game )
+            self.widgets[ "teamInfo" ] = TeamInfoBox( self.game )
         elif self.mode == 2:
-            self.widgets[ "dicePlay" ] = DicesPlayBar( self.game )
+            self.widgets[ "dicePlay" ] = DicesPlayBox( self.game )
             self.widgets[ "throw" ] = PygameButton(
                 self.game, r"panel\DiceAtk2.png", (60,60), (400,450),
                 self.game.battle.throw )

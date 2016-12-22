@@ -2,6 +2,8 @@
 import pygame
 from pygame.locals import *
 from enum import Enum
+
+from image import AttrImage
 from util import *
 
 class PygameWidget:
@@ -44,7 +46,7 @@ class PygameButton(PygameWidget):
             not self.game.cursor.isLeftClick() and self.game.lastCursor.isLeftClick():
             self.func( *self.argv )
 
-class DicesBoxBar(PygameWidget):
+class DicesBox(PygameWidget):
     maxBoxSize  = 10
     boxTop      = -100
     boxBottom   = 400
@@ -162,13 +164,14 @@ class DicesBoxBar(PygameWidget):
             images.append( pygame.transform.scale( image, self.imgSize ) )
         return images
 
-class DicesPlayBar(PygameWidget):
-    boxLeft     = 10
-    boxTop      = 450
-    imageWidth  = 60
-    imageHeight = 60
-    imageSize   = (60,60)
-    imageBorder = 15
+
+class DicesPlayBox(PygameWidget):
+    boxLeft   = 10
+    boxTop    = 450
+    imgWidth  = 60
+    imgHeight = 60
+    imgSize   = (60,60)
+    imgBorder = 15
     def __init__(self, game):
         super().__init__(game)
         self.dices = []
@@ -190,5 +193,53 @@ class DicesPlayBar(PygameWidget):
                 image = dice.getDiceTypeImage().copy()
             else:
                 image = dice.getFace().getFaceAttrImage().copy()
-            self.diceImages.append( ( pygame.transform.scale(image, self.imageSize), 
-                (self.boxLeft+i*(self.imageBorder+self.imageWidth), self.boxTop) ) )
+            self.diceImages.append( ( pygame.transform.scale(image, self.imgSize), 
+                (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop) ) )
+
+
+class TeamInfoBox(PygameWidget):
+    boxTop    = 400
+    boxLeft   = 500
+    imgTop    = 500
+    imgWidth  = 48
+    imgHeight = 48
+    imgSize   = (48,48)
+    imgBorder = 2
+    def __init__(self, game):
+        super().__init__(game)
+        self.attrs = {        
+            "Nor" : { 'img': AttrImage.Nor, 'num': 0 },
+            "Atk" : { 'img': AttrImage.Atk, 'num': 0 },
+            "Def" : { 'img': AttrImage.Def, 'num': 4 },
+            "Mov" : { 'img': AttrImage.Mov, 'num': 0 },
+            "Spc" : { 'img': AttrImage.Spc, 'num': 5 },
+            "Heal": { 'img': AttrImage.Heal,'num': 0 },
+        }
+
+    def update(self):
+        self.resetAttr()
+
+    def draw(self):
+        def countPos(self, i):
+            return self.boxLeft+i*(self.imgBorder+self.imgWidth)
+        screen = pygame.display.get_surface()
+        i = 0
+        for key, attr in self.attrs.items():
+            screen.blit( pygame.transform.scale(attr['img'].value, self.imgSize), 
+                         (countPos(self, i), self.imgTop) )
+            pygame.draw.rect(screen, pygame.color.Color("black"), 
+                (countPos(self, i), self.imgTop+self.imgHeight, 
+                 self.imgWidth, self.imgHeight*0.8), 0)
+
+            font = pygame.font.SysFont("comicsansms", 72)
+            text = font.render( str(attr['num']), True, pygame.color.Color("white"))
+            text = pygame.transform.scale(text, (48,int(48*0.8)))
+            screen.blit( text, (countPos(self, i), self.imgTop+self.imgHeight) )
+            i += 1
+
+    def resetAttr(self):
+        for key, val in self.attrs.items():
+            self.attrs[key]['num'] = self.game.battle.teamPlayer.attr[key]
+
+
+

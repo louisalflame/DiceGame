@@ -99,8 +99,14 @@ class BattleManager:
  
 class TeamManager:
     def __init__(self, equip):
-        self.attr = None 
-        self.tower = None
+        self.attr = {
+            "Nor": 60, "Atk": 0, "Def": 2220,
+            "Mov": 0, "Spc": 320, "Heal": 0
+        }
+        self.tower = {
+            "Nor": 0, "Atk": 0, "Def": 0,
+            "Mov": 0, "Spc": 0, "Heal": 0
+        }
         self.player = None
         self.dices = { "box":[], "play":[], "used":[] }
         for i, diceType in enumerate(equip.dices):
