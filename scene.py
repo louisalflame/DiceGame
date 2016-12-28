@@ -9,7 +9,10 @@ class Scene:
     def __init__(self, game, window):
         self.game = game
         self.window = window
+        self.ready = True
         self.widgets = dict()
+    def isReady(self):
+        return self.ready
     def draw(self):
         for key, widget in self.widgets.items():
             widget.draw()
@@ -28,7 +31,7 @@ class MenuScene(Scene):
     def construct(self):
         self.widgets[ "battle" ] = PygameButton( 
             self.game, r"panel\DiceAtk.png", (120,120), (300,100), 
-            self.game.setNextScene, [battleScene] )
+            self.game.setNextScene, [BattleScene] )
         self.widgets[ "equip" ] = PygameButton( 
             self.game, r"panel\DiceDef.png", (120,120), (300,250), 
             self.game.setNextScene, [EquipScene] )
@@ -47,33 +50,16 @@ class MenuScene(Scene):
 #========================
 # Battle Scene
 #========================
-class battleScene(Scene):
+class BattleScene(Scene):
     def __init__(self, game, window):
         super().__init__(game, window)
         self.mode = 0
         self.nextMode = 0
          
     def construct(self):
-        self.game.startBattle()
-        self.updateMode()
- 
-    def updateMode(self):
-        self.mode = self.nextMode
-        if self.mode == 0:
-            self.widgets[ "back" ] = PygameButton( 
-                self.game, r"panel\DiceDef.png", (40,40), (750,10), 
-                self.game.setNextScene, [MenuScene] )
-            self.widgets[ "updateStage" ] = PygameButton( 
-                self.game, r"panel\DiceSpc.png", (40,40), (700,10), 
-                self.game.battle.updateStage )
-        elif self.mode == 1:
-            self.widgets[ "diceBox" ] = DicesBox( self.game )
-            self.widgets[ "teamInfo" ] = TeamInfoBox( self.game )
-        elif self.mode == 2:
-            self.widgets[ "dicePlay" ] = DicesPlayBox( self.game )
-            self.widgets[ "throw" ] = PygameButton(
-                self.game, r"panel\DiceAtk2.png", (60,60), (400,450),
-                self.game.battle.throw )
+        self.game.startBattle(self)
+        self.drawGUI()
+        self.game.battle.updateStage()
  
     def remove(self):
         super().remove()
@@ -86,8 +72,27 @@ class battleScene(Scene):
  
     def update(self):
         super().update()
-        if self.mode != self.nextMode:
-            self.updateMode()
+        self.updateReady()
+
+
+    def drawGUI(self):
+        self.widgets[ "back" ] = PygameButton( 
+            self.game, r"panel\DiceDef.png", (40,40), (750,10), 
+            self.game.setNextScene, [MenuScene] )
+        self.widgets[ "updateStage" ] = PygameButton( 
+            self.game, r"panel\DiceSpc.png", (40,40), (700,10), 
+            self.game.battle.updateStage )
+        self.widgets[ "diceBox" ] = DicesBox( self.game )
+        self.widgets[ "teamInfo" ] = TeamInfoBox( self.game )
+        self.widgets[ "dicePlay" ] = DicesPlayBox( self.game )
+
+    def updateReady(self):
+        for key, widget in self.widgets.items():
+            if not widget.ready:
+                self.ready = False
+                break
+        else:
+            self.ready = True
  
              
 class EquipScene(Scene):

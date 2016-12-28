@@ -4,12 +4,21 @@ from pygame.locals import *
 from enum import Enum
 
 from image import AttrImage
+from data import DiceAttr
 from util import *
 
 class PygameWidget:
     def __init__(self, game):
         self.game = game
         self.ready = True
+        self.visible = True
+        self.exist = True
+    def show(self):
+        self.visible = True
+    def hide(self):
+        self.visible = False
+    def toggle(self):
+        self.visible = not self.visible
     def isReady(self):
         return self.ready
     def draw(self):
@@ -27,8 +36,15 @@ class PygameButton(PygameWidget):
         self.argv = argv
 
     def draw(self):
+        #not draw if not visible, half alpha if not ready
+        if not self.exist or not self.visible:
+            return
+        elif not self.game.currentScene.isReady():
+            image = pygame.transform.scale( imageTransparent(self.image, 0.5), self.size )
+            pos = self.pos            
+
         #draw 1.1 bigger when over, 1.2 bigger when pressed
-        if self.game.cursor.isOverRect( self.pos, self.size ) and self.game.cursor.isLeftClick():
+        elif self.game.cursor.isPressDown( self.pos, self.size ):
             image = pygame.transform.scale( self.image, (int(self.size[0]*1.2), int(self.size[1]*1.2)) )
             pos = ( self.pos[0]-int(self.size[0]*0.1), self.pos[1]-int(self.size[1]*0.1) )
         elif self.game.cursor.isOverRect( self.pos, self.size ):
@@ -42,8 +58,10 @@ class PygameButton(PygameWidget):
         screen.blit(image, pos)
 
     def update(self):
-        if self.game.cursor.isOverRect( self.pos, self.size ) and \
-            not self.game.cursor.isLeftClick() and self.game.lastCursor.isLeftClick():
+        if not self.exist:
+            return
+        if self.game.cursor.isClick( self.pos, self.size ) and \
+            self.game.currentScene.isReady() :
             self.func( *self.argv )
 
 class DicesBox(PygameWidget):
@@ -80,12 +98,12 @@ class DicesBox(PygameWidget):
         if self.mode == self.BoxMode.prepare and self.frame > self.prepareTime:
             self.mode = self.BoxMode.dropping
             self.frame = 0
-        #draw dice details if cursor over
-        elif self.mode == self.BoxMode.ready:
-            self.updateReadyDices()
         #draw dices dropping from top
         elif self.mode == self.BoxMode.dropping:
             self.updateDroppingDices()
+        #draw dice details if cursor over
+        elif self.mode == self.BoxMode.ready:
+            self.updateReadyDices()
 
         self.frame += 1
 
@@ -168,6 +186,7 @@ class DicesBox(PygameWidget):
 class DicesPlayBox(PygameWidget):
     boxLeft   = 10
     boxTop    = 450
+    RowHeight = 80
     imgWidth  = 60
     imgHeight = 60
     imgSize   = (60,60)
@@ -188,13 +207,19 @@ class DicesPlayBox(PygameWidget):
     def getDices(self):
         self.dices = []
         self.diceImages = []
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices["base"]):
+            image = dice.getFace().getFaceAttrImage().copy()
+            self.diceImages.append(
+                ( pygame.transform.scale(image, self.imgSize), 
+                ( self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop) ) )
         for i, dice in enumerate(self.game.battle.teamPlayer.dices["play"]):
             if dice.isIdle():
                 image = dice.getDiceTypeImage().copy()
             else:
                 image = dice.getFace().getFaceAttrImage().copy()
-            self.diceImages.append( ( pygame.transform.scale(image, self.imgSize), 
-                (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop) ) )
+            self.diceImages.append( 
+                ( pygame.transform.scale(image, self.imgSize), 
+                ( self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop+self.RowHeight) ) )
 
 
 class TeamInfoBox(PygameWidget):
@@ -208,12 +233,12 @@ class TeamInfoBox(PygameWidget):
     def __init__(self, game):
         super().__init__(game)
         self.attrs = [
-            { "name": "Nor", "img": AttrImage.Nor, 'num': 0 },
-            { "name": "Atk", "img": AttrImage.Atk, 'num': 0 },
-            { "name": "Def", "img": AttrImage.Def, 'num': 0 },
-            { "name": "Mov", "img": AttrImage.Mov, 'num': 0 },
-            { "name": "Spc", "img": AttrImage.Spc, 'num': 0 },
-            { "name": "Heal", "img": AttrImage.Heal, 'num': 0 },
+            { "name": DiceAttr.Nor, "img": AttrImage.Nor, 'num': 0 },
+            { "name": DiceAttr.Atk, "img": AttrImage.Atk, 'num': 0 },
+            { "name": DiceAttr.Def, "img": AttrImage.Def, 'num': 0 },
+            { "name": DiceAttr.Mov, "img": AttrImage.Mov, 'num': 0 },
+            { "name": DiceAttr.Spc, "img": AttrImage.Spc, 'num': 0 },
+            { "name": DiceAttr.Heal, "img": AttrImage.Heal, 'num': 0 },
         ]
 
     def update(self):
