@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 from enum import Enum
 
-from image import AttrImage
+from image import AttrImage, TowerImage
 from data import DiceAttr
 from util import *
 
@@ -213,7 +213,7 @@ class DicesPlayBox(PygameWidget):
         for i, dice in enumerate(self.game.battle.teamPlayer.dices["base"][:]):
             pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop)
             if self.game.cursor.isClick( pos, self.imgSize ) and \
-                self.game.currentScene.isReady() :
+                self.game.currentScene.isReady() and not dice.isIdle():
                 self.game.battle.teamPlayer.diceBaseTurnPlay(i)
             else:
                 image = dice.getFace().getTowerAttrImageSrc().copy()
@@ -223,7 +223,7 @@ class DicesPlayBox(PygameWidget):
         for i, dice in enumerate(self.game.battle.teamPlayer.dices["play"][:]):
             pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop+self.RowHeight)
             if self.game.cursor.isClick( pos, self.imgSize ) and \
-                self.game.currentScene.isReady() :
+                self.game.currentScene.isReady() and not dice.isIdle():
                 self.game.battle.teamPlayer.dicePlayTurnBase(i)
             else:
                 image = dice.getDiceTypeImage().copy() if dice.isIdle() \
@@ -234,7 +234,7 @@ class DicesPlayBox(PygameWidget):
 
 
 class TeamInfoBox(PygameWidget):
-    boxTop    = 400
+    boxTop    = 450
     boxLeft   = 500
     imgTop    = 500
     imgWidth  = 48
@@ -252,6 +252,14 @@ class TeamInfoBox(PygameWidget):
             { "name": DiceAttr.Spc,  "img": AttrImage.Spc,  'num': 0 },
             { "name": DiceAttr.Heal, "img": AttrImage.Heal, 'num': 0 },
         ]
+        self.towers = [
+            TowerImage.TowerNor1,
+            TowerImage.TowerAtk2,
+            TowerImage.TowerDef3,
+            TowerImage.TowerMov4,
+            TowerImage.TowerSpc4,
+            TowerImage.TowerHeal2,
+        ]
 
     def update(self):
         self.resetAttr()
@@ -267,7 +275,11 @@ class TeamInfoBox(PygameWidget):
                       else countPos(self, i+0.8) - text.get_width()
             screen.blit( pygame.transform.scale( text,  (textWidth, textHeight) ), 
                 (textPos, self.imgTop+self.imgHeight+self.imgBorder) )
+
         screen = pygame.display.get_surface()
+        for i , tower in enumerate(self.towers):
+            screen.blit( pygame.transform.scale(tower.value, self.imgSize),
+                         (countPos(self, i), self.boxTop) )
         for i, attr in enumerate(self.attrs):
             screen.blit( pygame.transform.scale(attr['img'].value, self.imgSize), 
                          (countPos(self, i), self.imgTop) )
