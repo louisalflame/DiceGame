@@ -50,6 +50,9 @@ class CursorManager:
                self.lastCursor.isLeftClick() and \
                not self.cursor.isLeftClick()
 
+    def isNewMoveIn(self, pos, size):
+        return not self.lastCursor.isOverRect(pos, size)
+
 def font_MsjhBd(size):
     return pygame.font.Font(os.environ['SYSTEMROOT'] + "\\Fonts\\msjhbd.ttf", size)
 
@@ -57,3 +60,9 @@ def imageTransparent(image, percent):
     image = image.convert()
     image.set_alpha( int( 256 * percent ) )
     return image
+
+def imageScaleFromCenter(image, pos, size, scale):
+    image = pygame.transform.scale( 
+            image, (int(size[0]*scale), int(size[1]*scale)) )
+    pos = ( pos[0]-int(size[0]*(scale-1)/2), pos[1]-int(size[1]*(scale-1)/2) )
+    return image, pos

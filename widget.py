@@ -45,11 +45,9 @@ class PygameButton(PygameWidget):
 
         #draw 1.1 bigger when over, 1.2 bigger when pressed
         elif self.game.cursor.isPressDown( self.pos, self.size ):
-            image = pygame.transform.scale( self.image, (int(self.size[0]*1.2), int(self.size[1]*1.2)) )
-            pos = ( self.pos[0]-int(self.size[0]*0.1), self.pos[1]-int(self.size[1]*0.1) )
+            image, pos = imageScaleFromCenter( self.image, self.pos, self.size, 1.2 )
         elif self.game.cursor.isOverRect( self.pos, self.size ):
-            image = pygame.transform.scale( self.image, (int(self.size[0]*1.1), int(self.size[1]*1.1)) )
-            pos = ( self.pos[0]-int(self.size[0]*0.05), self.pos[1]-int(self.size[1]*0.05) )
+            image, pos = imageScaleFromCenter( self.image, self.pos, self.size, 1.1 )
         else:
             image = pygame.transform.scale( self.image, self.size )
             pos = self.pos
@@ -138,7 +136,7 @@ class DicesBox(PygameWidget):
             return self.boxLeft+self.imgInterval+detailDist+self.detailBorder*j
 
         #first over, reset the detail progress
-        if not self.game.lastCursor.isOverRect( (self.boxLeft, pos), self.imgSize ):
+        if self.game.cursor.isNewMoveIn( (self.boxLeft, pos), self.imgSize ):
             self.frame = 0
 
         images = self.getDiceAttrImages(self.dices[i])   
@@ -193,33 +191,46 @@ class DicesPlayBox(PygameWidget):
     imgBorder = 15
     def __init__(self, game):
         super().__init__(game)
-        self.dices = []
         self.diceImages = []
 
     def update(self):
-        self.getDices()
+        self.diceImages = []
+        self.getDicesBase()
+        self.getDicesPlay()
 
     def draw(self):
         screen = pygame.display.get_surface()
         for image, pos in self.diceImages:
+            if self.game.cursor.isPressDown(pos, self.imgSize):
+                image ,pos = imageScaleFromCenter(image, pos, self.imgSize, 1.2)
+            elif self.game.cursor.isOverRect(pos, self.imgSize):
+                image ,pos = imageScaleFromCenter(image, pos, self.imgSize, 1.1)
+            else:
+                image ,pos = imageScaleFromCenter(image, pos, self.imgSize, 1)
             screen.blit(image, pos)
 
-    def getDices(self):
-        self.dices = []
-        self.diceImages = []
-        for i, dice in enumerate(self.game.battle.teamPlayer.dices["base"]):
-            image = dice.getFace().getFaceAttrImage().copy()
-            self.diceImages.append(
-                ( pygame.transform.scale(image, self.imgSize), 
-                ( self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop) ) )
-        for i, dice in enumerate(self.game.battle.teamPlayer.dices["play"]):
-            if dice.isIdle():
-                image = dice.getDiceTypeImage().copy()
+    def getDicesBase(self):
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices["base"][:]):
+            pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop)
+            if self.game.cursor.isClick( pos, self.imgSize ) and \
+                self.game.currentScene.isReady() :
+                self.game.battle.teamPlayer.diceBaseTurnPlay(i)
             else:
-                image = dice.getFace().getFaceAttrImage().copy()
-            self.diceImages.append( 
-                ( pygame.transform.scale(image, self.imgSize), 
-                ( self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop+self.RowHeight) ) )
+                image = dice.getFace().getTowerAttrImageSrc().copy()
+                self.diceImages.append( (image, pos) )
+
+    def getDicesPlay(self):
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices["play"][:]):
+            pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop+self.RowHeight)
+            if self.game.cursor.isClick( pos, self.imgSize ) and \
+                self.game.currentScene.isReady() :
+                self.game.battle.teamPlayer.dicePlayTurnBase(i)
+            else:
+                image = dice.getDiceTypeImage().copy() if dice.isIdle() \
+                    else dice.getFace().getFaceAttrImage().copy()
+                self.diceImages.append( (image, pos) )
+
+
 
 
 class TeamInfoBox(PygameWidget):
@@ -232,12 +243,13 @@ class TeamInfoBox(PygameWidget):
     imgBorder = 2
     def __init__(self, game):
         super().__init__(game)
+        self.numFont = pygame.font.SysFont("impact", 24)
         self.attrs = [
-            { "name": DiceAttr.Nor, "img": AttrImage.Nor, 'num': 0 },
-            { "name": DiceAttr.Atk, "img": AttrImage.Atk, 'num': 0 },
-            { "name": DiceAttr.Def, "img": AttrImage.Def, 'num': 0 },
-            { "name": DiceAttr.Mov, "img": AttrImage.Mov, 'num': 0 },
-            { "name": DiceAttr.Spc, "img": AttrImage.Spc, 'num': 0 },
+            { "name": DiceAttr.Nor,  "img": AttrImage.Nor,  'num': 0 },
+            { "name": DiceAttr.Atk,  "img": AttrImage.Atk,  'num': 0 },
+            { "name": DiceAttr.Def,  "img": AttrImage.Def,  'num': 0 },
+            { "name": DiceAttr.Mov,  "img": AttrImage.Mov,  'num': 0 },
+            { "name": DiceAttr.Spc,  "img": AttrImage.Spc,  'num': 0 },
             { "name": DiceAttr.Heal, "img": AttrImage.Heal, 'num': 0 },
         ]
 
@@ -247,23 +259,28 @@ class TeamInfoBox(PygameWidget):
     def draw(self):
         def countPos(self, i):
             return self.boxLeft+i*(self.imgBorder+self.imgWidth)
+        def drawAttrNum(self, i, attr):
+            text = self.numFont.render( str(attr['num']), True, pygame.color.Color("white") )
+            textWidth = text.get_width() if text.get_width() < self.imgWidth else self.imgWidth
+            textHeight = int( self.imgHeight / 2 )
+            textPos = countPos(self, i) if text.get_width() > self.imgWidth \
+                      else countPos(self, i+0.8) - text.get_width()
+            screen.blit( pygame.transform.scale( text,  (textWidth, textHeight) ), 
+                (textPos, self.imgTop+self.imgHeight+self.imgBorder) )
         screen = pygame.display.get_surface()
         for i, attr in enumerate(self.attrs):
             screen.blit( pygame.transform.scale(attr['img'].value, self.imgSize), 
                          (countPos(self, i), self.imgTop) )
-            pygame.draw.rect(screen, pygame.color.Color("black"), 
+            pygame.draw.rect( screen, pygame.color.Color("black"), 
                 (countPos(self, i), self.imgTop+self.imgHeight+self.imgBorder, 
                  self.imgWidth, self.imgHeight*0.6), 0)
-
-            font = pygame.font.SysFont("comicsansms", 20)
-            text = font.render( str(attr['num']), True, pygame.color.Color("white"))
-            text = pygame.transform.scale(text, (text.get_width(),int(48*0.6)))
-            screen.blit( text, (countPos(self, i+0.8)-text.get_width(), 
-                                self.imgTop+self.imgHeight) )
+            drawAttrNum(self, i, attr)
 
     def resetAttr(self):
         for attr in self.attrs:
             attr['num'] = self.game.battle.teamPlayer.attr[ attr['name'] ]
+
+
 
 
 

@@ -8,16 +8,12 @@ class DiceFace:
         self.faceId = faceId
 
         self.faceData = faceData
-        self.number = faceData.value['num']
-        self.attr   = faceData.value['attr']
-        self.base   = faceData.value['base']
-        self.image  = faceData.value['img']
 
     def getFaceAttrImage(self):
         return self.faceData.value['img'].value
 
     def getTowerAttrImageSrc(self):
-        return 
+        return self.faceData.value['base'].value['img'].value
 
     def clone(self):
         return DiceFace(self.diceId, self.faceId, self.faceData)

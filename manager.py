@@ -150,6 +150,12 @@ class TeamManager:
         for dice in self.dices["play"]:
             dice.throw()
 
+    def dicePlayTurnBase(self, i):
+        self.dices["base"].append( self.dices["play"].pop(i) )
+
+    def diceBaseTurnPlay(self, i):
+        self.dices["play"].append( self.dices["base"].pop(i) )
+
     def collect(self):
         for dice in self.dices["play"]:
             face = dice.getFace().faceData.value
