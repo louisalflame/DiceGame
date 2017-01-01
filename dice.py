@@ -1,12 +1,12 @@
  #-*- coding: UTF-8 -*-
 import random
 from data import DiceData
+from image import TowerImage
 
 class DiceFace:
     def __init__(self, diceId, faceId, faceData ):
         self.diceId = diceId
         self.faceId = faceId
-
         self.faceData = faceData
 
     def getFaceAttrImage(self):
@@ -75,3 +75,18 @@ class AttrDice(GameDice):
 
     def getDiceTypeImage(self):
         return self.type.value['img'].value
+
+
+
+#========================
+# Tower
+#========================
+
+class Tower:
+    def __init__(self, towerId, attr)
+        self.towerId = towerId
+        self.attr = attr
+        self.level = 0
+
+    def getTowerImage(self):
+        return TowerImage.TowerBase.value

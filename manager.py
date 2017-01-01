@@ -163,6 +163,7 @@ class TeamManager:
             dice.refresh()
             self.dices['used'].append( dice )
         for dice in self.dices["base"]:
+            dice.refresh()
             self.dices['used'].append( dice )
         self.dices["play"] = []
         self.dices["base"] = []
