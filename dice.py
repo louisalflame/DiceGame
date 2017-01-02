@@ -83,7 +83,7 @@ class AttrDice(GameDice):
 #========================
 
 class Tower:
-    def __init__(self, towerId, attr)
+    def __init__(self, towerId, attr):
         self.towerId = towerId
         self.attr = attr
         self.level = 0
