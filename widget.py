@@ -117,7 +117,7 @@ class DicesBox(PygameWidget):
         self.dices = []
         self.diceImages = []
         self.detailImages = []
-        for dice in self.game.battle.teamPlayer.dices["box"]:
+        for dice in self.game.battle.teamPlayer.dices.box:
             self.dices.append( dice.clone() )
         self.boxSize = min( self.maxBoxSize, len(self.dices))
 
@@ -210,7 +210,7 @@ class DicesPlayBox(PygameWidget):
             screen.blit(image, pos)
 
     def getDicesBase(self):
-        for i, dice in enumerate(self.game.battle.teamPlayer.dices["base"][:]):
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices.base[:]):
             pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop)
             if self.game.cursor.isClick( pos, self.imgSize ) and \
                 self.game.currentScene.isReady() and not dice.isIdle():
@@ -220,7 +220,7 @@ class DicesPlayBox(PygameWidget):
                 self.diceImages.append( (image, pos) )
 
     def getDicesPlay(self):
-        for i, dice in enumerate(self.game.battle.teamPlayer.dices["play"][:]):
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices.play[:]):
             pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop+self.RowHeight)
             if self.game.cursor.isClick( pos, self.imgSize ) and \
                 self.game.currentScene.isReady() and not dice.isIdle():
@@ -241,18 +241,19 @@ class TeamInfoBox(PygameWidget):
     imgHeight = 48
     imgSize   = (48,48)
     imgBorder = 2
+    attrOrder = [
+        DiceAttr.Nor,
+        DiceAttr.Atk,
+        DiceAttr.Def,
+        DiceAttr.Mov,
+        DiceAttr.Spc,
+        DiceAttr.Heal,
+    ]
     def __init__(self, game):
         super().__init__(game)
         self.numFont = pygame.font.SysFont("impact", 24)
-        self.attrs = [
-            { "name": DiceAttr.Nor,  "img": AttrImage.Nor,  'num': 0 },
-            { "name": DiceAttr.Atk,  "img": AttrImage.Atk,  'num': 0 },
-            { "name": DiceAttr.Def,  "img": AttrImage.Def,  'num': 0 },
-            { "name": DiceAttr.Mov,  "img": AttrImage.Mov,  'num': 0 },
-            { "name": DiceAttr.Spc,  "img": AttrImage.Spc,  'num': 0 },
-            { "name": DiceAttr.Heal, "img": AttrImage.Heal, 'num': 0 },
-        ]
-        self.towers = [ ]
+        self.attrs = DiceAttr.getNewAttrsDict()
+        self.towers = []
 
     def update(self):
         self.resetAttr()
@@ -260,8 +261,8 @@ class TeamInfoBox(PygameWidget):
     def draw(self):
         def countPos(self, i):
             return self.boxLeft+i*(self.imgBorder+self.imgWidth)
-        def drawAttrNum(self, i, attr):
-            text = self.numFont.render( str(attr['num']), True, pygame.color.Color("white") )
+        def drawAttrNum(self, i, num):
+            text = self.numFont.render( str(num), True, pygame.color.Color("white") )
             textWidth = text.get_width() if text.get_width() < self.imgWidth else self.imgWidth
             textHeight = int( self.imgHeight / 2 )
             textPos = countPos(self, i) if text.get_width() > self.imgWidth \
@@ -273,20 +274,17 @@ class TeamInfoBox(PygameWidget):
         for i, tower in enumerate(self.towers):
             screen.blit( pygame.transform.scale(tower, self.imgSize),
                          (countPos(self, i), self.boxTop) )
-        for i, attr in enumerate(self.attrs):
-            screen.blit( pygame.transform.scale(attr['img'].value, self.imgSize), 
+        for i, attr in enumerate(self.attrOrder):
+            screen.blit( pygame.transform.scale(attr.value.value.copy(), self.imgSize), 
                          (countPos(self, i), self.imgTop) )
             pygame.draw.rect( screen, pygame.color.Color("black"), 
                 (countPos(self, i), self.imgTop+self.imgHeight+self.imgBorder, 
                  self.imgWidth, self.imgHeight*0.6), 0)
-            drawAttrNum(self, i, attr)
+            drawAttrNum(self, i, self.attrs[attr] )
 
     def resetAttr(self):
-        for attr in self.attrs:
-            attr['num'] = self.game.battle.teamPlayer.attr[ attr['name'] ]
-        self.towers = []
-        for i, tower in enumerate(self.game.battle.teamPlayer.tower):
-            self.towers.append( tower.getTowerImage() )
+        self.attrs = self.game.battle.teamPlayer.attr.getAttrs()
+        self.towers = self.game.battle.teamPlayer.tower.getTowersImage()
 
 
 

@@ -13,7 +13,7 @@ class DiceFace:
         return self.faceData.value['img'].value
 
     def getTowerAttrImageSrc(self):
-        return self.faceData.value['base'].value['img'].value
+        return self.faceData.value['base'].value
 
     def clone(self):
         return DiceFace(self.diceId, self.faceId, self.faceData)
