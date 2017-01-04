@@ -252,14 +252,7 @@ class TeamInfoBox(PygameWidget):
             { "name": DiceAttr.Spc,  "img": AttrImage.Spc,  'num': 0 },
             { "name": DiceAttr.Heal, "img": AttrImage.Heal, 'num': 0 },
         ]
-        self.towers = [
-            TowerImage.TowerNor1,
-            TowerImage.TowerAtk2,
-            TowerImage.TowerDef3,
-            TowerImage.TowerMov4,
-            TowerImage.TowerSpc4,
-            TowerImage.TowerHeal2,
-        ]
+        self.towers = [ ]
 
     def update(self):
         self.resetAttr()
@@ -277,8 +270,8 @@ class TeamInfoBox(PygameWidget):
                 (textPos, self.imgTop+self.imgHeight+self.imgBorder) )
 
         screen = pygame.display.get_surface()
-        for i , tower in enumerate(self.towers):
-            screen.blit( pygame.transform.scale(tower.value, self.imgSize),
+        for i, tower in enumerate(self.towers):
+            screen.blit( pygame.transform.scale(tower, self.imgSize),
                          (countPos(self, i), self.boxTop) )
         for i, attr in enumerate(self.attrs):
             screen.blit( pygame.transform.scale(attr['img'].value, self.imgSize), 
@@ -291,6 +284,9 @@ class TeamInfoBox(PygameWidget):
     def resetAttr(self):
         for attr in self.attrs:
             attr['num'] = self.game.battle.teamPlayer.attr[ attr['name'] ]
+        self.towers = []
+        for i, tower in enumerate(self.game.battle.teamPlayer.tower):
+            self.towers.append( tower.getTowerImage() )
 
 
 

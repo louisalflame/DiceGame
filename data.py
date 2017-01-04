@@ -514,4 +514,55 @@ class DiceData(Enum):
                 FaceData.AtkAtk3 ],
             'img' : DiceImage.DiceHeal }
 
-    
+
+class TowerData(Enum):
+    Null = { 'max': 1,
+             'img' : [ TowerImage.TowerBase ] }
+             
+    Nor = { 'max' : 5,
+            'img': [ 
+                TowerImage.TowerBase,
+                TowerImage.TowerNor1,
+                TowerImage.TowerNor2,
+                TowerImage.TowerNor3,
+                TowerImage.TowerNor4, ] }
+
+    Atk = { 'max' : 5,
+            'img': [ 
+                TowerImage.TowerBase,
+                TowerImage.TowerAtk1,
+                TowerImage.TowerAtk2,
+                TowerImage.TowerAtk3,
+                TowerImage.TowerAtk4, ] }
+
+    Def = { 'max' : 5,
+            'img': [ 
+                TowerImage.TowerBase,
+                TowerImage.TowerDef1,
+                TowerImage.TowerDef2,
+                TowerImage.TowerDef3,
+                TowerImage.TowerDef4, ] }
+
+    Mov = { 'max' : 5,
+            'img': [ 
+                TowerImage.TowerBase,
+                TowerImage.TowerMov1,
+                TowerImage.TowerMov2,
+                TowerImage.TowerMov3,
+                TowerImage.TowerMov4, ] }
+
+    Spc = { 'max' : 5,
+            'img': [ 
+                TowerImage.TowerBase,
+                TowerImage.TowerSpc1,
+                TowerImage.TowerSpc2,
+                TowerImage.TowerSpc3,
+                TowerImage.TowerSpc4, ] }
+
+    Heal = { 'max' : 5,
+             'img': [ 
+                TowerImage.TowerBase,
+                TowerImage.TowerHeal1,
+                TowerImage.TowerHeal2,
+                TowerImage.TowerHeal3,
+                TowerImage.TowerHeal4, ] }

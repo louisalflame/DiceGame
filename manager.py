@@ -7,7 +7,7 @@ import sys, time
 from scene import MenuScene, BattleScene, EquipScene
 from util import *
 from data import DiceData, DiceAttr
-from dice import AttrDice
+from dice import AttrDice, Tower
  
 class GameManager:
     def __init__(self):
@@ -127,10 +127,9 @@ class TeamManager:
             DiceAttr.Nor: 0, DiceAttr.Atk: 0, DiceAttr.Def: 0,
             DiceAttr.Mov: 0, DiceAttr.Spc: 0, DiceAttr.Heal: 0
         }
-        self.tower = {
-            DiceAttr.Nor: 0, DiceAttr.Atk: 0, DiceAttr.Def: 0,
-            DiceAttr.Mov: 0, DiceAttr.Spc: 0, DiceAttr.Heal: 0
-        }
+        self.tower = [
+            Tower(0), Tower(1), Tower(2), Tower(3), Tower(4), Tower(5),
+        ]
         self.player = None
         self.dices = { "box":[], "play":[], "base":[], "used":[] }
         for i, diceType in enumerate(equip.dices):
