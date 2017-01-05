@@ -53,8 +53,8 @@ class CursorManager:
     def isNewMoveIn(self, pos, size):
         return not self.lastCursor.isOverRect(pos, size)
 
-def font_MsjhBd(size):
-    return pygame.font.Font(os.environ['SYSTEMROOT'] + "\\Fonts\\msjhbd.ttf", size)
+
+
 
 def imageTransparent(image, percent):
     image = image.convert()

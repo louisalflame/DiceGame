@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 from enum import Enum
 
-from image import AttrImage, TowerImage
+from image import DiceImage, AttrImage, TowerImage
 from data import DiceAttr
 from util import *
 
@@ -67,6 +67,12 @@ class DicesBox(PygameWidget):
     boxTop      = -100
     boxBottom   = 400
     boxLeft     = 10
+    infoTop     = 5
+    infoLeft    = 60
+    infoHeight  = 50
+    infoWidth   = 50
+    infoInterval = 30
+    infoSize    = (50,50)
     imgWidth    = 40
     imgHeight   = 40
     imgSize     = (40,40)
@@ -83,6 +89,8 @@ class DicesBox(PygameWidget):
     def __init__(self, game):
         super().__init__(game)
         self.boxSize = 10
+        self.boxNum = 0
+        self.usedNum = 0
         self.dices = []
         self.diceImages = []
         self.detailImages = []
@@ -107,15 +115,17 @@ class DicesBox(PygameWidget):
 
     def draw(self):
         screen = pygame.display.get_surface()
+        self.drawBoxInfo()
         if self.mode == self.BoxMode.ready:
             for image, pos in self.detailImages:
                 screen.blit(image, pos)
         for image, pos in self.diceImages:
             screen.blit(image, pos)
-
     def resetDices(self):
         self.dices = self.game.battle.teamPlayer.dices.getBoxList()
-        self.boxSize = min( self.maxBoxSize, len(self.dices) )
+        self.boxNum = len(self.dices)
+        self.usedNum = len(self.game.battle.teamPlayer.dices.getUsedList())
+        self.boxSize = min(self.maxBoxSize, self.boxNum)
         self.diceImages = []
         self.detailImages = []
 
@@ -166,6 +176,36 @@ class DicesBox(PygameWidget):
 
     def countDicePos(self, i):
         return self.boxBottom-i*(self.imgHeight+self.imgInterval)
+
+    def drawBoxInfo(self):
+        def drawNum(self, num):
+            text = pygame.font.SysFont("impact", 24).render( 
+                str(num), True, pygame.color.Color("white") )
+            textWidth = text.get_width() if text.get_width() < self.infoWidth*0.8 \
+                        else int( self.infoWidth*0.8 )
+            textHeight = int( self.infoHeight*3 / 4 )
+            pygame.transform.scale( text,  (textWidth, textHeight) )
+            return text
+        screen = pygame.display.get_surface()
+        image = pygame.transform.scale( DiceImage.DiceBox.value, self.infoSize )
+        screen.blit(image, (self.infoLeft, self.infoTop))
+        pygame.draw.rect( screen, pygame.color.Color("black"), 
+            (self.infoLeft, self.infoTop+self.infoHeight+2, 
+            self.infoWidth, self.infoInterval-4), 0)
+        text = drawNum(self, self.boxNum)
+        screen.blit( text, 
+            (self.infoLeft + int(self.infoWidth*0.9) - text.get_width(), 
+            self.infoTop+self.infoHeight) )
+        image = pygame.transform.scale( DiceImage.DiceUsed.value, self.infoSize )
+        screen.blit(image, (self.infoLeft, self.infoTop+self.infoHeight+self.infoInterval))
+        pygame.draw.rect( screen, pygame.color.Color("black"), 
+            (self.infoLeft, self.infoTop+self.infoHeight*2+self.infoInterval+2, 
+            self.infoWidth, self.infoInterval-4), 0)
+        text = drawNum(self, self.usedNum)
+        screen.blit( text, 
+            (self.infoLeft + int(self.infoWidth*0.9) - text.get_width(), 
+            self.infoTop+self.infoHeight*2+self.infoInterval) )
+
 
 class DicesPlayBox(PygameWidget):
     boxLeft   = 10
@@ -220,9 +260,9 @@ class DicesPlayBox(PygameWidget):
 
 
 class TeamInfoBox(PygameWidget):
-    boxTop    = 450
+    boxTop    = 460
     boxLeft   = 500
-    imgTop    = 500
+    imgTop    = 510
     imgWidth  = 48
     imgHeight = 48
     imgSize   = (48,48)
@@ -249,12 +289,12 @@ class TeamInfoBox(PygameWidget):
             return self.boxLeft+i*(self.imgBorder+self.imgWidth)
         def drawAttrNum(self, i, num):
             text = self.numFont.render( str(num), True, pygame.color.Color("white") )
-            textWidth = text.get_width() if text.get_width() < self.imgWidth else self.imgWidth
-            textHeight = int( self.imgHeight / 2 )
-            textPos = countPos(self, i) if text.get_width() > self.imgWidth \
-                      else countPos(self, i+0.8) - text.get_width()
+            textWidth = text.get_width() if text.get_width() < self.imgWidth*0.8 \
+                        else int( self.imgWidth*0.8 )
+            textHeight = int( self.imgHeight*3 / 4 )
+            textPos = countPos(self, i) + int(self.imgWidth*0.9) - textWidth
             screen.blit( pygame.transform.scale( text,  (textWidth, textHeight) ), 
-                (textPos, self.imgTop+self.imgHeight+self.imgBorder) )
+                (textPos, self.imgTop+self.imgHeight) )
 
         screen = pygame.display.get_surface()
         for i, tower in enumerate(self.towers):

@@ -31,8 +31,7 @@ class GameManager:
         sys.exit()
  
     def update(self):
-        pygame.time.Clock().tick(100)
-
+        #pygame.time.Clock().tick(1000)
         self.cursor.update()
         self.updateScene()
 
