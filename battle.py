@@ -25,12 +25,44 @@ class TowerManager:
         ]
 
     def getTowersImage(self):
-        return [ Tower(0).getTowerImage(),
-        Tower(0).getTowerImage() ,
-        Tower(0).getTowerImage() ,
-        Tower(0).getTowerImage() ,
-        Tower(0).getTowerImage() ,
-        Tower(0).getTowerImage()  ]
+        return [ tower.getTowerImage() for tower in self.towers ]
+
+    def upgrade(self, count):
+        attrPriors = self.findAttrPriors(count)
+        levelMax = 1
+        for tower in self.towers:
+            levelMax= max(levelMax, tower.towerData.value['max'])
+        for i in reversed(range(levelMax)):
+            if i > 0:
+                pass
+            else:
+                print( attrPriors[0] )
+
+    def findAttrPriors(self, count):
+        priors = sorted(count.items(), key=lambda x: x[1]['double'], reverse=True)
+
+        attrDoublePriors = list()
+        tmpPriors = []
+        for prior in priors:
+            if not tmpPriors or prior[1]['double'] == tmpPriors[0][1]['double']:
+                tmpPriors.append(prior)
+            else:
+                attrDoublePriors.append(tmpPriors)
+                tmpPriors = [prior]
+        attrDoublePriors.append(tmpPriors)
+
+        attrPriors = list()
+        for priors in attrDoublePriors:
+            basePriors = sorted(priors, key=lambda x: x[1]['base'], reverse=True)
+            tmpPriors = []
+            for prior in basePriors:
+                if not tmpPriors or prior[1]['base'] == tmpPriors[0][1]['base']:
+                    tmpPriors.append(prior)
+                else:
+                    attrPriors.append(tmpPriors)
+                    tmpPriors = [prior]
+            attrPriors.append(tmpPriors)
+        return attrPriors
 
 class DiceManager:
     def __init__(self):
@@ -76,6 +108,17 @@ class DiceManager:
         for dice in self.play:
             face = dice.getFace().faceData.value
             count[ face['attr'] ] += face['num']
+        return count
+
+    def countBase(self):
+        count = dict()
+        for attr in DiceAttr.getAttrs():
+            count[attr] = { 'base': 0, 'double': 0 }
+        for dice in self.base:
+            face = dice.getFace().faceData.value
+            if face['tower'] == face['attr']:
+                count[ face['tower'] ]['double'] += 1
+            count[ face['tower'] ]['base'] += 1
         return count
 
     def cleanPlayBase(self):
@@ -161,6 +204,7 @@ class TeamManager:
         self.dices.diceBaseTurnPlay(i)
 
     def collect(self):
+        self.tower.upgrade( self.dices.countBase() )
         self.attr.collect( self.dices.countAttr() )
         self.dices.cleanPlayBase()
         self.dices.checkResetBox()

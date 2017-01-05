@@ -7,8 +7,7 @@ import sys, time
 from scene import MenuScene, BattleScene, EquipScene
 from util import *
 from data import DiceData, DiceAttr
-from dice import AttrDice, Tower
-from battle import BattleManager, TeamManager, AttrManager, TowerManager
+from battle import BattleManager, TeamManager
  
 class GameManager:
     def __init__(self):
@@ -32,6 +31,7 @@ class GameManager:
  
     def update(self):
         #pygame.time.Clock().tick(1000)
+
         self.cursor.update()
         self.updateScene()
 

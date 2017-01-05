@@ -66,3 +66,12 @@ def imageScaleFromCenter(image, pos, size, scale):
             image, (int(size[0]*scale), int(size[1]*scale)) )
     pos = ( pos[0]-int(size[0]*(scale-1)/2), pos[1]-int(size[1]*(scale-1)/2) )
     return image, pos
+
+
+def imageNumInBlock(self, num, width, height):
+    text = pygame.font.SysFont("impact", 24).render( 
+        str(num), True, pygame.color.Color("white") )
+    textWidth = text.get_width() if text.get_width() < width*0.8 else int( width*0.8 )
+    textHeight = int( height*3 / 4 )
+    pygame.transform.scale( text,  (textWidth, textHeight) )
+    return text

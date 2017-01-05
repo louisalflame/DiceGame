@@ -78,9 +78,9 @@ class DicesBox(PygameWidget):
     imgSize     = (40,40)
     imgInterval = 10
     detailBorder = 2
-    dropSpeed   = 100
+    dropSpeed   = 150
     detailSpeed = 10
-    prepareTime = 20
+    prepareTime = 5
     class BoxMode(Enum):
         prepare  = 1
         dropping = 2
@@ -178,21 +178,13 @@ class DicesBox(PygameWidget):
         return self.boxBottom-i*(self.imgHeight+self.imgInterval)
 
     def drawBoxInfo(self):
-        def drawNum(self, num):
-            text = pygame.font.SysFont("impact", 24).render( 
-                str(num), True, pygame.color.Color("white") )
-            textWidth = text.get_width() if text.get_width() < self.infoWidth*0.8 \
-                        else int( self.infoWidth*0.8 )
-            textHeight = int( self.infoHeight*3 / 4 )
-            pygame.transform.scale( text,  (textWidth, textHeight) )
-            return text
         screen = pygame.display.get_surface()
         image = pygame.transform.scale( DiceImage.DiceBox.value, self.infoSize )
         screen.blit(image, (self.infoLeft, self.infoTop))
         pygame.draw.rect( screen, pygame.color.Color("black"), 
             (self.infoLeft, self.infoTop+self.infoHeight+2, 
             self.infoWidth, self.infoInterval-4), 0)
-        text = drawNum(self, self.boxNum)
+        text = imageNumInBlock(self, self.boxNum, self.infoWidth, self.infoHeight)
         screen.blit( text, 
             (self.infoLeft + int(self.infoWidth*0.9) - text.get_width(), 
             self.infoTop+self.infoHeight) )
@@ -201,7 +193,7 @@ class DicesBox(PygameWidget):
         pygame.draw.rect( screen, pygame.color.Color("black"), 
             (self.infoLeft, self.infoTop+self.infoHeight*2+self.infoInterval+2, 
             self.infoWidth, self.infoInterval-4), 0)
-        text = drawNum(self, self.usedNum)
+        text = imageNumInBlock(self, self.usedNum, self.infoWidth, self.infoHeight)
         screen.blit( text, 
             (self.infoLeft + int(self.infoWidth*0.9) - text.get_width(), 
             self.infoTop+self.infoHeight*2+self.infoInterval) )
@@ -285,32 +277,27 @@ class TeamInfoBox(PygameWidget):
         self.resetAttr()
 
     def draw(self):
-        def countPos(self, i):
-            return self.boxLeft+i*(self.imgBorder+self.imgWidth)
-        def drawAttrNum(self, i, num):
-            text = self.numFont.render( str(num), True, pygame.color.Color("white") )
-            textWidth = text.get_width() if text.get_width() < self.imgWidth*0.8 \
-                        else int( self.imgWidth*0.8 )
-            textHeight = int( self.imgHeight*3 / 4 )
-            textPos = countPos(self, i) + int(self.imgWidth*0.9) - textWidth
-            screen.blit( pygame.transform.scale( text,  (textWidth, textHeight) ), 
-                (textPos, self.imgTop+self.imgHeight) )
-
         screen = pygame.display.get_surface()
         for i, tower in enumerate(self.towers):
             screen.blit( pygame.transform.scale(tower, self.imgSize),
-                         (countPos(self, i), self.boxTop) )
+                         (self.countPos(i), self.boxTop) )
         for i, attr in enumerate(self.attrOrder):
             screen.blit( pygame.transform.scale(attr.value.value.copy(), self.imgSize), 
-                         (countPos(self, i), self.imgTop) )
+                         (self.countPos(i), self.imgTop) )
             pygame.draw.rect( screen, pygame.color.Color("black"), 
-                (countPos(self, i), self.imgTop+self.imgHeight+self.imgBorder, 
+                (self.countPos(i), self.imgTop+self.imgHeight+self.imgBorder, 
                  self.imgWidth, self.imgHeight*0.6), 0)
-            drawAttrNum(self, i, self.attrs[attr] )
+
+            text = imageNumInBlock(self, self.attrs[attr], self.imgWidth, self.imgHeight) 
+            textPos = self.countPos(i) + int(self.imgWidth*0.9) - text.get_width()
+            screen.blit( text, (textPos, self.imgTop+self.imgHeight) )
 
     def resetAttr(self):
         self.attrs = self.game.battle.teamPlayer.attr.getAttrs()
         self.towers = self.game.battle.teamPlayer.tower.getTowersImage()
+
+    def countPos(self, i):
+        return self.boxLeft+i*(self.imgBorder+self.imgWidth)
 
 
 
