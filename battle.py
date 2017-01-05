@@ -38,6 +38,13 @@ class DiceManager:
         self.play = []
         self.base = []
         self.used = []
+
+    def getBoxList(self):
+        return list(self.box)
+    def getPlayList(self):
+        return list(self.play)
+    def getBaseList(self):
+        return list(self.base)
     
     def setDices(self, equip):
         for i, diceType in enumerate(equip.dices):

@@ -1,5 +1,8 @@
  #-*- coding: UTF-8 -*-
+import pygame
+from pygame.locals import *
 import random
+
 from data import DiceData, TowerData
 from image import TowerImage
 
@@ -10,10 +13,14 @@ class DiceFace:
         self.faceData = faceData
 
     def getFaceAttrImage(self):
-        return self.faceData.value['img'].value
+        return self.faceData.value['img'].value.copy()
+    def getFaceAttrImageWithSize(self, size):
+        return pygame.transform.scale( self.getFaceAttrImage(), size )
 
-    def getTowerAttrImageSrc(self):
-        return self.faceData.value['base'].value
+    def getTowerAttrImage(self):
+        return self.faceData.value['base'].value.copy()
+    def getTowerAttrImageWithSize(self, size):
+        return pygame.transform.scale( self.getTowerAttrImage(), size )
 
     def clone(self):
         return DiceFace(self.diceId, self.faceId, self.faceData)
@@ -70,11 +77,12 @@ class AttrDice(GameDice):
             self.faces.append( DiceFace( self.diceId, i, faceData ) )
 
     def clone(self):
-        dice = super().clone(AttrDice(self.diceId))
-        return dice
+        return super().clone(AttrDice(self.diceId))
 
     def getDiceTypeImage(self):
-        return self.type.value['img'].value
+        return self.type.value['img'].value.copy()
+    def getDiceTypeImageWithSize(self, size):
+        return pygame.transform.scale( self.getDiceTypeImage(), size )
 
 
 
@@ -88,7 +96,9 @@ class Tower:
         self.towerData = towerData
 
     def getTowerImage(self):
-        return self.towerData.value['img'][ self.level ].value
+        return self.towerData.value['img'][ self.level ].value.copy()
+    def getTowerImageWithSize(self, size):
+        return pygame.transform.scale( self.getTowerImage(), size )
 
     def levelUp(self):
         self.level = (self.level + 1) % self.towerData.value['max']

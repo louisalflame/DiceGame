@@ -114,16 +114,14 @@ class DicesBox(PygameWidget):
             screen.blit(image, pos)
 
     def resetDices(self):
-        self.dices = []
+        self.dices = self.game.battle.teamPlayer.dices.getBoxList()
+        self.boxSize = min( self.maxBoxSize, len(self.dices) )
         self.diceImages = []
         self.detailImages = []
-        for dice in self.game.battle.teamPlayer.dices.box:
-            self.dices.append( dice.clone() )
-        self.boxSize = min( self.maxBoxSize, len(self.dices))
 
     def updateReadyDices(self):
         for i in range(self.boxSize):
-            image = self.getDiceTypeImage(self.dices[i])
+            image = self.dices[i].getDiceTypeImageWithSize(self.imgSize)
             pos = self.countDicePos(i)
             self.diceImages.append( (image, (self.boxLeft, pos)) )
             if self.game.cursor.isOverRect( (self.boxLeft, pos), self.imgSize ):
@@ -139,7 +137,7 @@ class DicesBox(PygameWidget):
         if self.game.cursor.isNewMoveIn( (self.boxLeft, pos), self.imgSize ):
             self.frame = 0
 
-        images = self.getDiceAttrImages(self.dices[i])   
+        images = [ face.getFaceAttrImageWithSize(self.imgSize) for face in self.dices[i].faces ]
         detailDist = self.frame * self.detailSpeed
         for j in range(6):
             if detailDist > (j+1)*self.imgWidth:
@@ -152,7 +150,7 @@ class DicesBox(PygameWidget):
     def updateDroppingDices(self):
         dropDist = self.dropSpeed * self.frame
         for i in range(self.boxSize):
-            image = self.getDiceTypeImage(self.dices[i])
+            image = self.dices[i].getDiceTypeImageWithSize(self.imgSize)
             pos = self.countDicePos(i)
             if dropDist >= pos-self.boxTop:
                 dropDist -= pos-self.boxTop
@@ -168,18 +166,6 @@ class DicesBox(PygameWidget):
 
     def countDicePos(self, i):
         return self.boxBottom-i*(self.imgHeight+self.imgInterval)
-
-    def getDiceTypeImage(self, dice):
-        image = dice.getDiceTypeImage().copy()
-        return pygame.transform.scale( image, self.imgSize )
-
-    def getDiceAttrImages(self, dice):
-        images = []
-        for face in dice.faces:
-            image = face.getFaceAttrImage().copy()
-            images.append( pygame.transform.scale( image, self.imgSize ) )
-        return images
-
 
 class DicesPlayBox(PygameWidget):
     boxLeft   = 10
@@ -210,24 +196,24 @@ class DicesPlayBox(PygameWidget):
             screen.blit(image, pos)
 
     def getDicesBase(self):
-        for i, dice in enumerate(self.game.battle.teamPlayer.dices.base[:]):
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices.getBaseList()):
             pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop)
             if self.game.cursor.isClick( pos, self.imgSize ) and \
                 self.game.currentScene.isReady() and not dice.isIdle():
                 self.game.battle.teamPlayer.diceBaseTurnPlay(i)
             else:
-                image = dice.getFace().getTowerAttrImageSrc().copy()
+                image = dice.getFace().getTowerAttrImage()
                 self.diceImages.append( (image, pos) )
 
     def getDicesPlay(self):
-        for i, dice in enumerate(self.game.battle.teamPlayer.dices.play[:]):
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices.getPlayList()):
             pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop+self.RowHeight)
             if self.game.cursor.isClick( pos, self.imgSize ) and \
                 self.game.currentScene.isReady() and not dice.isIdle():
                 self.game.battle.teamPlayer.dicePlayTurnBase(i)
             else:
-                image = dice.getDiceTypeImage().copy() if dice.isIdle() \
-                    else dice.getFace().getFaceAttrImage().copy()
+                image = dice.getDiceTypeImage() if dice.isIdle() else \
+                        dice.getFace().getFaceAttrImage()
                 self.diceImages.append( (image, pos) )
 
 
