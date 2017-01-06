@@ -29,14 +29,33 @@ class TowerManager:
 
     def upgrade(self, count):
         attrPriors = self.findAttrPriors(count)
-        levelMax = 1
-        for tower in self.towers:
-            levelMax= max(levelMax, tower.towerData.value['max'])
-        for i in reversed(range(levelMax)):
-            if i > 0:
-                pass
-            else:
-                print( attrPriors[0] )
+        if attrPriors[0][0][1]['base'] == 0:
+            return
+        towerPriors = self.findTowerPriors()
+        #for i in reversed(range(levelMax)):
+        for towers in towerPriors:
+            if towers[0].level == 1:
+                a = None
+                for attrs in attrPriors:
+                    if attrs[0][1]['base'] >= 2:
+                        a = attrs
+                        break
+                if a:
+                    legals = []
+                    for attr in a:
+                        for t in towers:
+                            if t.towerData == t.AttrDataMapping[ attr[0] ]:
+                                legals.append(t)
+                    tower = random.choice(legals)
+                    tower.levelUp()
+                    break
+
+            elif towers[0].level == 0:
+                tower = towers[0]
+                attr = random.choice( attrPriors[0] )[0]
+                tower.setTowerAttr( attr )
+                tower.levelUp()
+                break
 
     def findAttrPriors(self, count):
         priors = sorted(count.items(), key=lambda x: x[1]['double'], reverse=True)
@@ -63,6 +82,20 @@ class TowerManager:
                     tmpPriors = [prior]
             attrPriors.append(tmpPriors)
         return attrPriors
+
+    def findTowerPriors(self):
+        priors = sorted(self.towers, key=lambda x:x.level, reverse=True)
+        towerPriors = list()
+        tmpPriors = []
+        for prior in priors:
+            if not tmpPriors or prior.level == tmpPriors[0].level:
+                tmpPriors.append(prior)
+            else:
+                towerPriors.append(tmpPriors)
+                tmpPriors = [prior]
+        towerPriors.append(tmpPriors)
+        return towerPriors
+
 
 class DiceManager:
     def __init__(self):

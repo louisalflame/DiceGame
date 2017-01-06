@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 import random
 
-from data import DiceData, TowerData
+from data import DiceAttr, DiceData, TowerData
 from image import TowerImage
 
 class DiceFace:
@@ -90,6 +90,14 @@ class AttrDice(GameDice):
 # Tower
 #========================
 class Tower:
+    AttrDataMapping = {
+        DiceAttr.Nor : TowerData.Nor,
+        DiceAttr.Atk : TowerData.Atk,
+        DiceAttr.Def : TowerData.Def,
+        DiceAttr.Mov : TowerData.Mov,
+        DiceAttr.Spc : TowerData.Spc,
+        DiceAttr.Heal : TowerData.Heal,
+    }
     def __init__(self, towerId, towerData=TowerData.Null):
         self.towerId = towerId
         self.level = 0
@@ -99,6 +107,9 @@ class Tower:
         return self.towerData.value['img'][ self.level ].value.copy()
     def getTowerImageWithSize(self, size):
         return pygame.transform.scale( self.getTowerImage(), size )
+
+    def setTowerAttr(self, diceAttr):
+        self.towerData = self.AttrDataMapping[ diceAttr ]
 
     def levelUp(self):
         self.level = (self.level + 1) % self.towerData.value['max']
