@@ -102,6 +102,7 @@ class Tower:
         self.towerId = towerId
         self.level = 0
         self.towerData = towerData
+        self.attr = None
 
     def getTowerImage(self):
         return self.towerData.value['img'][ self.level ].value.copy()
@@ -109,7 +110,8 @@ class Tower:
         return pygame.transform.scale( self.getTowerImage(), size )
 
     def setTowerAttr(self, diceAttr):
-        self.towerData = self.AttrDataMapping[ diceAttr ]
+        self.attr = diceAttr
+        self.towerData = self.AttrDataMapping[ self.attr ]
 
     def levelUp(self):
         self.level = (self.level + 1) % self.towerData.value['max']

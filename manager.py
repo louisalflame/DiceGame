@@ -67,10 +67,16 @@ class EquipmentManager:
         self.game = game
         self.dices = [
             DiceData.Nor, DiceData.Nor, DiceData.Nor,
+            DiceData.Nor, DiceData.Nor, DiceData.Nor,
+            DiceData.Atk, DiceData.Atk, DiceData.Atk,
             DiceData.Atk, DiceData.Atk, DiceData.Atk,
             DiceData.Def, DiceData.Def, DiceData.Def,
+            DiceData.Def, DiceData.Def, DiceData.Def,
+            DiceData.Mov, DiceData.Mov, DiceData.Mov,
             DiceData.Mov, DiceData.Mov, DiceData.Mov,
             DiceData.Spc, DiceData.Spc, DiceData.Spc,
+            DiceData.Spc, DiceData.Spc, DiceData.Spc,
             DiceData.Heal, DiceData.Heal, DiceData.Heal,
+            DiceData.Heal, DiceData.Heal, 
         ]
  

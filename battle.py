@@ -28,30 +28,43 @@ class TowerManager:
         return [ tower.getTowerImage() for tower in self.towers ]
 
     def upgrade(self, count):
-        attrPriors = self.findAttrPriors(count)
-        if attrPriors[0][0][1]['base'] == 0:
+        def getLeftestTower(towers, attr):
+            for tower in towers:
+                if attr == tower.attr:
+                    return tower
+        if not count:
             return
+        attrPriors = self.findAttrPriors(count)
         towerPriors = self.findTowerPriors()
-        #for i in reversed(range(levelMax)):
         for towers in towerPriors:
+            towerAttrs = [ tower.attr for tower in towers if tower.attr ]
+            if towers[0].level == 3:
+                legalAttrs = self.findLegalAttrs( attrPriors, towerAttrs, 2, 1 )
+                if legalAttrs:
+                    attr = random.choice(legalAttrs)
+                    tower = getLeftestTower(towers, attr)
+                    tower.levelUp()
+                    break
+
+            if towers[0].level == 2:
+                legalAttrs = self.findLegalAttrs( attrPriors, towerAttrs, 1, 1 )
+                if legalAttrs:
+                    attr = random.choice(legalAttrs)
+                    tower = getLeftestTower(towers, attr)
+                    tower.levelUp()
+                    break
+
             if towers[0].level == 1:
-                a = None
-                for attrs in attrPriors:
-                    if attrs[0][1]['base'] >= 2:
-                        a = attrs
-                        break
-                if a:
-                    legals = []
-                    for attr in a:
-                        for t in towers:
-                            if t.towerData == t.AttrDataMapping[ attr[0] ]:
-                                legals.append(t)
-                    tower = random.choice(legals)
+                legalAttrs = self.findLegalAttrs( attrPriors, towerAttrs, 2, 0 )
+                if legalAttrs:
+                    attr = random.choice(legalAttrs)
+                    tower = getLeftestTower(towers, attr)
                     tower.levelUp()
                     break
 
             elif towers[0].level == 0:
                 tower = towers[0]
+                print (attrPriors[0])
                 attr = random.choice( attrPriors[0] )[0]
                 tower.setTowerAttr( attr )
                 tower.levelUp()
@@ -95,6 +108,15 @@ class TowerManager:
                 tmpPriors = [prior]
         towerPriors.append(tmpPriors)
         return towerPriors
+
+    def findLegalAttrs(self, attrPriors, towerAttrs, base, double):
+        for attrs in attrPriors:
+            if attrs[0][1]['base'] >= base and attrs[0][1]['double'] >= double:
+                legalAttrs = [ attr[0] for attr in attrs if attr[0] in towerAttrs ]
+                if legalAttrs:
+                    return legalAttrs
+        return None
+
 
 
 class DiceManager:
@@ -144,6 +166,8 @@ class DiceManager:
         return count
 
     def countBase(self):
+        if not self.base:
+            return None
         count = dict()
         for attr in DiceAttr.getAttrs():
             count[attr] = { 'base': 0, 'double': 0 }
