@@ -121,6 +121,7 @@ class DicesBox(PygameWidget):
                 screen.blit(image, pos)
         for image, pos in self.diceImages:
             screen.blit(image, pos)
+
     def resetDices(self):
         self.dices = self.game.battle.teamPlayer.dices.getBoxList()
         self.boxNum = len(self.dices)
@@ -200,24 +201,39 @@ class DicesBox(PygameWidget):
 
 
 class DicesPlayBox(PygameWidget):
-    boxLeft   = 10
-    boxTop    = 450
-    RowHeight = 80
-    imgWidth  = 60
-    imgHeight = 60
-    imgSize   = (60,60)
-    imgBorder = 15
+    boxLeft      = 10
+    boxTop       = 450
+    playBoxTop   = 520
+    imgWidth     = 60
+    imgHeight    = 60
+    imgSize      = (60,60)
+    imgBorder    = 15
+    detailHeight = 40
+    detailWidth  = 40
+    detailSize   = (40,40)
+    detailTop    = 470
+    detailBorder = 2
+    detailSpeed  = 8
     def __init__(self, game):
         super().__init__(game)
         self.diceImages = []
+        self.detailImages = []
+        self.frame = 0
 
     def update(self):
         self.diceImages = []
+        self.detailImages = []
         self.getDicesBase()
         self.getDicesPlay()
+        if self.game.battle.stage == self.game.battle.BattleMode.MovThrow:
+            self.getDicesDetails()
+            self.frame += 1
+
 
     def draw(self):
         screen = pygame.display.get_surface()
+        for image, pos in self.detailImages:
+            screen.blit(image, pos)
         for image, pos in self.diceImages:
             if self.game.cursor.isPressDown(pos, self.imgSize):
                 image ,pos = imageScaleFromCenter(image, pos, self.imgSize, 1.2)
@@ -239,7 +255,7 @@ class DicesPlayBox(PygameWidget):
 
     def getDicesPlay(self):
         for i, dice in enumerate(self.game.battle.teamPlayer.dices.getPlayList()):
-            pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.boxTop+self.RowHeight)
+            pos = (self.boxLeft+i*(self.imgBorder+self.imgWidth), self.playBoxTop)
             if self.game.cursor.isClick( pos, self.imgSize ) and \
                 self.game.currentScene.isReady() and not dice.isIdle():
                 self.game.battle.teamPlayer.dicePlayTurnBase(i)
@@ -247,6 +263,38 @@ class DicesPlayBox(PygameWidget):
                 image = dice.getDiceTypeImage() if dice.isIdle() else \
                         dice.getFace().getFaceAttrImage()
                 self.diceImages.append( (image, pos) )
+
+    def getDicesDetails(self):
+        def countPosX(self, i):
+            return self.boxLeft+i*(self.imgBorder+self.imgWidth)
+        def detailReadyPos(self, i, j):
+            return countPosX(self, i)+(self.detailWidth+self.detailBorder)*j
+        def detailRunningPos(self, i, j, detailDist):
+            return countPosX(self, i)+detailDist-self.detailWidth+self.detailBorder*j
+        def detailStartPos(self, detailDist):
+            return self.detailTop+self.detailWidth-detailDist
+
+        for i, dice in enumerate(self.game.battle.teamPlayer.dices.getPlayList()):
+            pos = (countPosX(self, i), self.playBoxTop)
+
+            if self.game.cursor.isOverRect( pos, self.imgSize ):
+                #first over, reset the detail progress
+                if self.game.cursor.isNewMoveIn( pos, self.imgSize ):
+                    self.frame = 0
+
+                images = [ face.getFaceAttrImageWithSize(self.detailSize) for face in dice.faces ]
+                detailDist = self.frame * self.detailSpeed
+                for j in range(6):
+                    if detailDist > (j+1)*self.detailWidth:
+                        self.detailImages.insert( 0, ( images[j],  (detailReadyPos(self, i, j), self.detailTop) ) )
+                    elif j == 0 and detailDist < self.detailWidth:
+                        percent =  0.5*detailDist/self.detailWidth
+                        self.detailImages.insert( 0, ( imageTransparent(images[j], percent), 
+                                                       (countPosX(self, i), detailStartPos(self, detailDist)) ) )
+                    elif detailDist > j*self.detailWidth:
+                        percent =  0.5*(detailDist - j*self.detailWidth)/self.detailWidth
+                        self.detailImages.insert( 0, ( imageTransparent(images[j], percent), 
+                                                       (detailRunningPos(self, i, j, detailDist), self.detailTop) ) )
 
 
 
